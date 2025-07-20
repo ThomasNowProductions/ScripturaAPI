@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bijbel-API Demo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4d6.png">
+</head>
+<body>
+    <header class="main-header" aria-label="Site header">
+        <div class="header-content">
+            <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4d6.png" alt="Bijbel icoon" class="logo" aria-label="Logo">
+            <div class="header-title">
+                <h1>Bijbel-API <span class="subtitle">(Statenvertaling)</span></h1>
+            </div>
+            <a href="/docs" target="_blank" class="docs-btn" aria-label="API documentatie">API Docs</a>
+        </div>
+    </header>
+    <main>
+        <div class="card uitleg">
+            <h2>Wat kun je hier?</h2>
+            <ul>
+                <li>Zoek een specifiek vers</li>
+                <li>Bekijk een willekeurige dagtekst</li>
+                <li>Bekijk een heel hoofdstuk</li>
+                <li>Probeer de API live uit</li>
+            </ul>
+        </div>
+        <div class="card-grid">
+            <div class="card zoekvers">
+                <h2>Zoek een specifiek vers</h2>
+                <form id="verseForm">
+                    <label>Boek: <input type="text" id="book" required placeholder="Genesis"></label>
+                    <label>Hoofdstuk: <input type="number" id="chapter" required min="1"></label>
+                    <label>Vers: <input type="number" id="verse" required min="1"></label>
+                    <button type="submit">Zoek</button>
+                </form>
+                <div id="verseResult"></div>
+            </div>
+            <div class="card dagtekst">
+                <h2>Dagtekst</h2>
+                <button id="getDaytext">Genereer dagtekst</button>
+                <div id="daytextResult"></div>
+            </div>
+            <div class="card zoekhoofdstuk">
+                <h2>Bekijk een heel hoofdstuk</h2>
+                <form id="chapterForm">
+                    <label>Boek:
+                        <select id="bookChapterSelect" required></select>
+                    </label>
+                    <label>Hoofdstuk:
+                        <input type="number" id="chapterNum" required min="1">
+                    </label>
+                    <button type="submit">Toon hoofdstuk</button>
+                </form>
+                <div id="chapterResult"></div>
+            </div>
+        </div>
+        <div class="card api-endpoints">
+            <h2>API Endpoints</h2>
+            <p>Hieronder vind je een overzicht van alle API endpoints. Klik op een voorbeeld-URL om deze te openen, of kopieer de URL met één klik.</p>
+            <table>
+                <thead>
+                    <tr><th>Endpoint</th><th>Beschrijving</th><th>Voorbeeld</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>/random</code></td><td>Willekeurig vers</td><td><a href="/random" target="_blank" class="ex-link">/random</a> <button class="copy-btn" data-url="/random">Kopieer</button></td></tr>
+                    <tr><td><code>/verse</code></td><td>Specifiek vers</td><td><a href="/verse?book=Genesis&chapter=1&verse=1" target="_blank" class="ex-link">/verse?book=Genesis&chapter=1&verse=1</a> <button class="copy-btn" data-url="/verse?book=Genesis&chapter=1&verse=1">Kopieer</button></td></tr>
+                    <tr><td><code>/passage</code></td><td>Meerdere verzen uit één hoofdstuk</td><td><a href="/passage?book=Lukas&chapter=2&start=1&end=10" target="_blank" class="ex-link">/passage?book=Lukas&chapter=2&start=1&end=10</a> <button class="copy-btn" data-url="/passage?book=Lukas&chapter=2&start=1&end=10">Kopieer</button></td></tr>
+                    <tr><td><code>/books</code></td><td>Lijst van boeken</td><td><a href="/books" target="_blank" class="ex-link">/books</a> <button class="copy-btn" data-url="/books">Kopieer</button></td></tr>
+                    <tr><td><code>/chapters</code></td><td>Hoofdstukken in een boek</td><td><a href="/chapters?book=Lukas" target="_blank" class="ex-link">/chapters?book=Lukas</a> <button class="copy-btn" data-url="/chapters?book=Lukas">Kopieer</button></td></tr>
+                    <tr><td><code>/verses</code></td><td>Verzen in een hoofdstuk</td><td><a href="/verses?book=Lukas&chapter=2" target="_blank" class="ex-link">/verses?book=Lukas&chapter=2</a> <button class="copy-btn" data-url="/verses?book=Lukas&chapter=2">Kopieer</button></td></tr>
+                    <tr><td><code>/search</code></td><td>Zoek op tekst</td><td><a href="/search?query=vrede" target="_blank" class="ex-link">/search?query=vrede</a> <button class="copy-btn" data-url="/search?query=vrede">Kopieer</button></td></tr>
+                    <tr><td><code>/daytext</code></td><td>Dagtekst (optioneel: <code>?seed=...</code>)</td><td><a href="/daytext" target="_blank" class="ex-link">/daytext</a> <button class="copy-btn" data-url="/daytext">Kopieer</button></td></tr>
+                    <tr><td><code>/versions</code></td><td>Beschikbare vertalingen</td><td><a href="/versions" target="_blank" class="ex-link">/versions</a> <button class="copy-btn" data-url="/versions">Kopieer</button></td></tr>
+                    <tr><td><code>/chapter</code></td><td>Alle verzen van een hoofdstuk</td><td><a href="/chapter?book=Genesis&chapter=1" target="_blank" class="ex-link">/chapter?book=Genesis&chapter=1</a> <button class="copy-btn" data-url="/chapter?book=Genesis&chapter=1">Kopieer</button></td></tr>
+                </tbody>
+            </table>
+            <p>Bekijk de <a href="/docs" target="_blank">volledige API-documentatie</a> voor meer details.</p>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 bible-api.nl &mdash; Gemaakt door <a href="https://github.com/AlexLamper" target="_blank">Alex Lamper</a></p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html> 

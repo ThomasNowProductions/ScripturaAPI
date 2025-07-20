@@ -2,6 +2,7 @@ from fastapi import FastAPI, Query, HTTPException
 import json, random
 import os
 from typing import List
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
@@ -9,6 +10,8 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "statenvertaling.jso
 
 with open(DATA_PATH, "r", encoding="utf-8") as f:
     data = json.load(f)["Statenvertaling"]
+
+app.mount("/site", StaticFiles(directory="site", html=True), name="site")
 
 @app.get("/")
 def root():
@@ -97,3 +100,11 @@ def daytext(seed: int = None):
 def get_versions():
     # In de toekomst uitbreidbaar, nu alleen Statenvertaling
     return {"versions": ["Statenvertaling"]}
+
+@app.get("/chapter", summary="Geef alle verzen van een hoofdstuk", description="Geeft alle verzen van een opgegeven boek en hoofdstuk.")
+def get_chapter(book: str, chapter: int):
+    try:
+        verzen = data[book][str(chapter)]
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Hoofdstuk niet gevonden")
+    return {"book": book, "chapter": chapter, "verses": verzen}
