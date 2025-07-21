@@ -90,3 +90,23 @@ function setupCopyButtons() {
 }
 setupCopyButtons();
 // Herhaal na dynamische updates indien nodig 
+
+// API Test functionaliteit
+function setupApiTestButtons() {
+    const btns = document.querySelectorAll('.api-test-btn');
+    btns.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const url = btn.getAttribute('data-url');
+            const resultDiv = btn.parentElement.querySelector('.api-test-result');
+            resultDiv.textContent = 'Bezig...';
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                resultDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (err) {
+                resultDiv.textContent = 'Fout bij ophalen of geen geldige JSON.';
+            }
+        });
+    });
+}
+setupApiTestButtons(); 
