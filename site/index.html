@@ -74,40 +74,50 @@
             <div class="grid md:grid-cols-3 gap-8 mb-10">
                 <!-- Zoek een specifiek vers -->
                 <div class="bg-white border border-blue-100 rounded-xl shadow p-6 flex flex-col">
-                    <h2 class="text-base font-semibold text-blue-900 mb-2">Zoek een specifiek vers</h2>
-                    <form id="verseForm" class="flex flex-col gap-3">
-                        <label class="font-medium text-blue-900">Boek:
-                            <input type="text" id="book" required placeholder="Genesis" class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition" />
-                        </label>
-                        <label class="font-medium text-blue-900">Hoofdstuk:
-                            <input type="number" id="chapter" required min="1" class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition" />
-                        </label>
-                        <label class="font-medium text-blue-900">Vers:
-                            <input type="number" id="verse" required min="1" class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition" />
-                        </label>
-                        <button type="submit" class="mt-2 border border-blue-500 text-blue-700 font-semibold py-2 px-4 rounded-lg bg-white hover:bg-blue-600 hover:text-white transition">Zoek</button>
-                    </form>
-                    <div id="verseResult" class="mt-4 bg-gray-50 border-l-4 border-blue-200 rounded p-3 text-gray-800 shadow-inner min-h-[2rem]"></div>
+                  <h2 class="text-base font-semibold text-blue-900 mb-2">Zoek een specifiek vers</h2>
+                  <form id="verseForm" class="flex flex-col gap-3">
+                      <label class="font-medium text-blue-900">Boek:
+                          <input type="text" id="book" required placeholder="Genesis" class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition" />
+                      </label>
+                      <label class="font-medium text-blue-900">Hoofdstuk:
+                          <input type="number" id="chapter" required min="1" placeholder="1" class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition" />
+                      </label>
+                      <label class="font-medium text-blue-900">Vers:
+                          <input type="number" id="verse" required min="1" placeholder="1" class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition" />
+                      </label>
+                      <button type="submit" class="mt-2 border border-blue-500 text-blue-700 font-semibold py-2 px-4 rounded-lg bg-white hover:bg-blue-600 hover:text-white transition">
+                          Zoek
+                      </button>
+                  </form>
+                  <div id="verseResult" class="mt-4 bg-gray-50 border-l-4 border-blue-200 rounded p-3 text-gray-800 shadow-inner min-h-[2rem]"></div>
                 </div>
+
                 <!-- Dagtekst -->
                 <div class="bg-white border border-blue-100 rounded-xl shadow p-6 flex flex-col">
-                    <h2 class="text-base font-semibold text-blue-900 mb-2">Dagtekst</h2>
-                    <button id="getDaytext" class="border border-blue-500 text-blue-700 font-semibold py-2 px-4 rounded-lg bg-white hover:bg-blue-600 hover:text-white transition mb-3">Genereer dagtekst</button>
-                    <div id="daytextResult" class="bg-gray-50 border-l-4 border-blue-200 rounded p-3 text-gray-800 shadow-inner min-h-[2rem]"></div>
+                  <h2 class="text-base font-semibold text-blue-900 mb-2">Dagtekst</h2>
+                  <button id="getDaytext" class="border border-blue-500 text-blue-700 font-semibold py-2 px-4 rounded-lg bg-white hover:bg-blue-600 hover:text-white transition mb-3">
+                      Genereer dagtekst
+                  </button>
+                  <div id="daytextResult" class="bg-gray-50 border-l-4 border-blue-200 rounded p-3 text-gray-800 shadow-inner min-h-[2rem]"></div>
                 </div>
+
                 <!-- Bekijk een heel hoofdstuk -->
                 <div class="bg-white border border-blue-100 rounded-xl shadow p-6 flex flex-col">
-                    <h2 class="text-base font-semibold text-blue-900 mb-2">Bekijk een heel hoofdstuk</h2>
-                    <form id="chapterForm" class="flex flex-col gap-3">
-                        <label class="font-medium text-blue-900">Boek:
-                            <select id="bookChapterSelect" required class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition"></select>
-                        </label>
-                        <label class="font-medium text-blue-900">Hoofdstuk:
-                            <input type="number" id="chapterNum" required min="1" class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition" />
-                        </label>
-                        <button type="submit" class="mt-2 border border-blue-500 text-blue-700 font-semibold py-2 px-4 rounded-lg bg-white hover:bg-blue-600 hover:text-white transition">Toon hoofdstuk</button>
-                    </form>
-                    <div id="chapterResult" class="mt-4 bg-gray-50 border-l-4 border-blue-200 rounded p-3 text-gray-800 shadow-inner min-h-[2rem]"></div>
+                  <h2 class="text-base font-semibold text-blue-900 mb-2">Bekijk een heel hoofdstuk</h2>
+                  <form id="chapterForm" class="flex flex-col gap-3">
+                      <label class="font-medium text-blue-900">Boek:
+                          <select id="bookChapterSelect" required class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition">
+                              <option value="">Laden...</option>
+                          </select>
+                      </label>
+                      <label class="font-medium text-blue-900">Hoofdstuk:
+                          <input type="number" id="chapterNum" required min="1" placeholder="1" class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition" />
+                      </label>
+                      <button type="submit" class="mt-2 border border-blue-500 text-blue-700 font-semibold py-2 px-4 rounded-lg bg-white hover:bg-blue-600 hover:text-white transition">
+                          Toon hoofdstuk
+                      </button>
+                  </form>
+                  <div id="chapterResult" class="mt-4 bg-gray-50 border-l-4 border-blue-200 rounded p-3 text-gray-800 shadow-inner min-h-[2rem]"></div>
                 </div>
             </div>
             <div class="bg-blue-50 border border-blue-100 rounded-2xl shadow-lg p-8 my-10">
@@ -130,7 +140,7 @@
                       <td class="px-4 py-3 border-b">Willekeurig vers</td>
                       <td class="px-4 py-3 border-b">
                         <a href="/api/random" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/random</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/random">Kopieer</button>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/random">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
@@ -138,7 +148,7 @@
                       <td class="px-4 py-3 border-b">Specifiek vers</td>
                       <td class="px-4 py-3 border-b">
                         <a href="/api/verse?book=Genesis&chapter=1&verse=1" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/verse?book=Genesis&chapter=1&verse=1</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/verse?book=Genesis&chapter=1&verse=1">Kopieer</button>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/verse?book=Genesis&chapter=1&verse=1">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
@@ -146,7 +156,7 @@
                       <td class="px-4 py-3 border-b">Meerdere verzen uit één hoofdstuk</td>
                       <td class="px-4 py-3 border-b">
                         <a href="/api/passage?book=Lukas&chapter=2&start=1&end=10" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/passage?book=Lukas&chapter=2&start=1&end=10</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/passage?book=Lukas&chapter=2&start=1&end=10">Kopieer</button>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/passage?book=Lukas&chapter=2&start=1&end=10">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
@@ -154,7 +164,7 @@
                       <td class="px-4 py-3 border-b">Lijst van boeken</td>
                       <td class="px-4 py-3 border-b">
                         <a href="/api/books" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/books</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/books">Kopieer</button>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/books">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
@@ -162,7 +172,7 @@
                       <td class="px-4 py-3 border-b">Hoofdstukken in een boek</td>
                       <td class="px-4 py-3 border-b">
                         <a href="/api/chapters?book=Lukas" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/chapters?book=Lukas</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/chapters?book=Lukas">Kopieer</button>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/chapters?book=Lukas">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
@@ -170,7 +180,7 @@
                       <td class="px-4 py-3 border-b">Verzen in een hoofdstuk</td>
                       <td class="px-4 py-3 border-b">
                         <a href="/api/verses?book=Lukas&chapter=2" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/verses?book=Lukas&chapter=2</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/verses?book=Lukas&chapter=2">Kopieer</button>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/verses?book=Lukas&chapter=2">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
@@ -178,7 +188,7 @@
                       <td class="px-4 py-3 border-b">Zoek op tekst</td>
                       <td class="px-4 py-3 border-b">
                         <a href="/api/search?query=vrede" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/search?query=vrede</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/search?query=vrede">Kopieer</button>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/search?query=vrede">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
@@ -186,7 +196,7 @@
                       <td class="px-4 py-3 border-b">Dagtekst (optioneel: <code>?seed=...</code>)</td>
                       <td class="px-4 py-3 border-b">
                         <a href="/api/daytext" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/daytext</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/daytext">Kopieer</button>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/daytext">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
@@ -194,7 +204,7 @@
                       <td class="px-4 py-3 border-b">Beschikbare vertalingen</td>
                       <td class="px-4 py-3 border-b">
                         <a href="/api/versions" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/versions</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/versions">Kopieer</button>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/versions">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
@@ -202,7 +212,7 @@
                       <td class="px-4 py-3">Alle verzen van een hoofdstuk</td>
                       <td class="px-4 py-3">
                         <a href="/api/chapter?book=Genesis&chapter=1" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/chapter?book=Genesis&chapter=1</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/chapter?book=Genesis&chapter=1">Kopieer</button>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/chapter?book=Genesis&chapter=1">Kopieer</button>
                       </td>
                     </tr>
                   </tbody>

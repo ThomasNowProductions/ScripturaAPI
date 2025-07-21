@@ -1,112 +1,180 @@
-from fastapi import FastAPI, Query, HTTPException, APIRouter
-import json, random
-import os
-from typing import List
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+import json
+import os
+import random
+import hashlib
+from datetime import date
 
 app = FastAPI()
-api_router = APIRouter()
 
-DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "statenvertaling.json")
+# CORS settings
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-with open(DATA_PATH, "r", encoding="utf-8") as f:
-    data = json.load(f)["Statenvertaling"]
+# Serve static files from /site
+app.mount("/site", StaticFiles(directory="site"), name="site")
 
-@api_router.get("/", tags=["Root"])
-def root():
-    return {"message": "Welkom bij de Bijbel-API! Zie /api/docs voor documentatie."}
+# Load and structure the data
+def load_data():
+    path = os.path.join("data", "statenvertaling.json")
+    with open(path, encoding="utf-8") as f:
+        raw_data = json.load(f)
 
-@api_router.get("/random")
+    structured_data = {}
+    for verse in raw_data["verses"]:
+        book = verse["book_name"]
+        chapter = str(verse["chapter"])
+        verse_number = str(verse["verse"])
+        text = verse["text"]
+
+        if book not in structured_data:
+            structured_data[book] = {}
+        if chapter not in structured_data[book]:
+            structured_data[book][chapter] = {}
+        structured_data[book][chapter][verse_number] = text
+
+    return structured_data
+
+data = load_data()
+
+# Dummy versions list (extend as needed)
+available_versions = ["Statenvertaling"]
+
+# Normalize book names for consistent lookup
+def normalize_book_name(book_name):
+    for name in data:
+        if name.lower().replace("ë", "e") == book_name.lower().replace("ë", "e"):
+            return name
+    return None
+
+# Serve index.html on /
+@app.get("/", response_class=FileResponse)
+def serve_index():
+    index_path = os.path.join("site", "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path, media_type="text/html")
+    raise HTTPException(status_code=404, detail="index.html niet gevonden")
+
+@app.get("/api/random")
 def get_random_verse():
-    boek = random.choice(list(data.keys()))
-    hoofdstuk = random.choice(list(data[boek].keys()))
-    vers = random.choice(list(data[boek][hoofdstuk].keys()))
-    tekst = data[boek][hoofdstuk][vers]
-    return {"book": boek, "chapter": hoofdstuk, "verse": vers, "text": tekst}
+    book = random.choice(list(data.keys()))
+    chapter = random.choice(list(data[book].keys()))
+    verse = random.choice(list(data[book][chapter].keys()))
+    return {
+        "book": book,
+        "chapter": chapter,
+        "verse": verse,
+        "text": data[book][chapter][verse],
+    }
 
-@api_router.get("/verse", summary="Haal een specifiek vers op", description="Geef boek, hoofdstuk en versnummer op.")
-def get_verse(book: str = Query(..., description="Naam van het bijbelboek"),
-              chapter: int = Query(..., description="Hoofdstuknummer"),
-              verse: int = Query(..., description="Versnummer")):
+@app.get("/api/verse")
+def get_verse(book: str, chapter: str, verse: str):
+    book_key = normalize_book_name(book)
+    if not book_key:
+        raise HTTPException(status_code=404, detail="Boek niet gevonden")
     try:
-        tekst = data[book][str(chapter)][str(verse)]
+        text = data[book_key][chapter][verse]
+        return {
+            "book": book_key,
+            "chapter": chapter,
+            "verse": verse,
+            "text": text,
+        }
     except KeyError:
         raise HTTPException(status_code=404, detail="Vers niet gevonden")
-    return {"book": book, "chapter": chapter, "verse": verse, "text": tekst}
 
-@api_router.get("/passage")
-def get_passage(book: str, chapter: int, start: int, end: int):
+@app.get("/api/passage")
+def get_passage(book: str, chapter: str, start: int, end: int):
+    book_key = normalize_book_name(book)
+    if not book_key:
+        raise HTTPException(status_code=404, detail="Boek niet gevonden")
     try:
-        verzen = {
-            str(v): data[book][str(chapter)][str(v)]
-            for v in range(start, end + 1)
+        verses = []
+        for i in range(start, end + 1):
+            verses.append({"verse": str(i), "text": data[book_key][str(chapter)][str(i)]})
+        return {
+            "book": book_key,
+            "chapter": chapter,
+            "verses": verses,
         }
     except KeyError:
         raise HTTPException(status_code=404, detail="Passage niet gevonden")
-    return {"book": book, "chapter": chapter, "verses": verzen}
 
-@api_router.get("/books")
+@app.get("/api/books")
 def get_books():
     return list(data.keys())
 
-@api_router.get("/chapters")
+@app.get("/api/chapters")
 def get_chapters(book: str):
-    try:
-        hoofdstukken = list(data[book].keys())
-    except KeyError:
+    book_key = normalize_book_name(book)
+    if not book_key:
         raise HTTPException(status_code=404, detail="Boek niet gevonden")
-    return {"book": book, "chapters": hoofdstukken}
+    return list(data[book_key].keys())
 
-@api_router.get("/verses")
-def get_verses(book: str, chapter: int):
+@app.get("/api/verses")
+def get_verses(book: str, chapter: str):
+    book_key = normalize_book_name(book)
+    if not book_key:
+        raise HTTPException(status_code=404, detail="Boek niet gevonden")
     try:
-        verzen = list(data[book][str(chapter)].keys())
+        return list(data[book_key][chapter].keys())
     except KeyError:
         raise HTTPException(status_code=404, detail="Hoofdstuk niet gevonden")
-    return {"book": book, "chapter": chapter, "verses": verzen}
 
-@api_router.get("/search", summary="Zoek in de bijbeltekst", description="Zoek naar verzen die een bepaalde tekst bevatten.")
-def search_verses(query: str) -> dict:
-    results: List[dict] = []
-    for boek, hoofdstukken in data.items():
-        for hoofdstuk, verzen in hoofdstukken.items():
-            for vers, tekst in verzen.items():
-                if query.lower() in tekst.lower():
+@app.get("/api/search")
+def search_verses(query: str = Query(..., min_length=1)):
+    results = []
+    for book, chapters in data.items():
+        for chapter, verses in chapters.items():
+            for verse_number, text in verses.items():
+                if query.lower() in text.lower():
                     results.append({
-                        "book": boek,
-                        "chapter": hoofdstuk,
-                        "verse": vers,
-                        "text": tekst
+                        "book": book,
+                        "chapter": chapter,
+                        "verse": verse_number,
+                        "text": text,
                     })
-    return {"results": results}
+    return results
 
-@api_router.get("/daytext", summary="Genereer een vaste dagtekst", description="Genereert een dagtekst op basis van de dag of een optionele seed.")
-def daytext(seed: int = None):
-    import datetime
-    import hashlib
-    if seed is None:
-        # Gebruik de huidige datum als seed (YYYYMMDD)
-        today = datetime.date.today().strftime("%Y%m%d")
-        seed = int(hashlib.sha256(today.encode()).hexdigest(), 16) % (10 ** 8)
-    rng = random.Random(seed)
-    boek = rng.choice(list(data.keys()))
-    hoofdstuk = rng.choice(list(data[boek].keys()))
-    vers = rng.choice(list(data[boek][hoofdstuk].keys()))
-    tekst = data[boek][hoofdstuk][vers]
-    return {"book": boek, "chapter": hoofdstuk, "verse": vers, "text": tekst, "seed": seed}
+@app.get("/api/daytext")
+def get_daytext(seed: str = None):
+    books = list(data.keys())
+    # Use today's date or a seed to get a reproducible random
+    base = seed if seed else date.today().isoformat()
+    hash_val = int(hashlib.sha256(base.encode()).hexdigest(), 16)
+    random.seed(hash_val)
+    book = random.choice(books)
+    chapter = random.choice(list(data[book].keys()))
+    verse = random.choice(list(data[book][chapter].keys()))
+    return {
+        "book": book,
+        "chapter": chapter,
+        "verse": verse,
+        "text": data[book][chapter][verse],
+    }
 
-@api_router.get("/versions", summary="Beschikbare vertalingen", description="Geeft een lijst van beschikbare bijbelvertalingen.")
+@app.get("/api/versions")
 def get_versions():
-    # In de toekomst uitbreidbaar, nu alleen Statenvertaling
-    return {"versions": ["Statenvertaling"]}
+    return available_versions
 
-@api_router.get("/chapter", summary="Geef alle verzen van een hoofdstuk", description="Geeft alle verzen van een opgegeven boek en hoofdstuk.")
-def get_chapter(book: str, chapter: int):
+@app.get("/api/chapter")
+def get_chapter(book: str, chapter: str):
+    book_key = normalize_book_name(book)
+    if not book_key:
+        raise HTTPException(status_code=404, detail="Boek niet gevonden")
     try:
-        verzen = data[book][str(chapter)]
+        return {
+            "book": book_key,
+            "chapter": chapter,
+            "verses": data[book_key][chapter],
+        }
     except KeyError:
         raise HTTPException(status_code=404, detail="Hoofdstuk niet gevonden")
-    return {"book": book, "chapter": chapter, "verses": verzen}
-
-app.include_router(api_router, prefix="/api")
-app.mount("/", StaticFiles(directory="site", html=True), name="site")
