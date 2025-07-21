@@ -112,7 +112,9 @@
             </div>
             <div class="bg-blue-50 border border-blue-100 rounded-2xl shadow-lg p-8 my-10">
               <h2 class="text-xl font-bold text-blue-700 mb-2">API Endpoints</h2>
-              <p class="mb-6 text-gray-700">Hieronder vind je een overzicht van alle API endpoints. Klik op een voorbeeld-URL om deze te openen, of kopieer de URL met één klik.</p>
+              <p class="mb-6 text-gray-700">Hieronder vind je een overzicht van alle API endpoints. Klik op een voorbeeld-URL om deze te openen, of kopieer de URL met één klik.<br>
+                <a href="/api/docs" target="_blank" class="inline-block mt-2 text-blue-700 underline hover:text-blue-900 font-semibold">Bekijk de API-documentatie (Swagger UI)</a>
+              </p>
               <div class="overflow-x-auto">
                 <table class="min-w-full bg-white rounded-xl shadow">
                   <thead>
@@ -124,83 +126,83 @@
                   </thead>
                   <tbody>
                     <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/random</code></td>
+                      <td class="px-4 py-3 border-b"><code>/api/random</code></td>
                       <td class="px-4 py-3 border-b">Willekeurig vers</td>
                       <td class="px-4 py-3 border-b">
-                        <a href="/random" target="_blank" class="text-blue-600 underline hover:text-blue-800">/random</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/random">Kopieer</button>
+                        <a href="/api/random" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/random</a>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/random">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/verse</code></td>
+                      <td class="px-4 py-3 border-b"><code>/api/verse</code></td>
                       <td class="px-4 py-3 border-b">Specifiek vers</td>
                       <td class="px-4 py-3 border-b">
-                        <a href="/verse?book=Genesis&chapter=1&verse=1" target="_blank" class="text-blue-600 underline hover:text-blue-800">/verse?book=Genesis&chapter=1&verse=1</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/verse?book=Genesis&chapter=1&verse=1">Kopieer</button>
+                        <a href="/api/verse?book=Genesis&chapter=1&verse=1" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/verse?book=Genesis&chapter=1&verse=1</a>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/verse?book=Genesis&chapter=1&verse=1">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/passage</code></td>
+                      <td class="px-4 py-3 border-b"><code>/api/passage</code></td>
                       <td class="px-4 py-3 border-b">Meerdere verzen uit één hoofdstuk</td>
                       <td class="px-4 py-3 border-b">
-                        <a href="/passage?book=Lukas&chapter=2&start=1&end=10" target="_blank" class="text-blue-600 underline hover:text-blue-800">/passage?book=Lukas&chapter=2&start=1&end=10</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/passage?book=Lukas&chapter=2&start=1&end=10">Kopieer</button>
+                        <a href="/api/passage?book=Lukas&chapter=2&start=1&end=10" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/passage?book=Lukas&chapter=2&start=1&end=10</a>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/passage?book=Lukas&chapter=2&start=1&end=10">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/books</code></td>
+                      <td class="px-4 py-3 border-b"><code>/api/books</code></td>
                       <td class="px-4 py-3 border-b">Lijst van boeken</td>
                       <td class="px-4 py-3 border-b">
-                        <a href="/books" target="_blank" class="text-blue-600 underline hover:text-blue-800">/books</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/books">Kopieer</button>
+                        <a href="/api/books" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/books</a>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/books">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/chapters</code></td>
+                      <td class="px-4 py-3 border-b"><code>/api/chapters</code></td>
                       <td class="px-4 py-3 border-b">Hoofdstukken in een boek</td>
                       <td class="px-4 py-3 border-b">
-                        <a href="/chapters?book=Lukas" target="_blank" class="text-blue-600 underline hover:text-blue-800">/chapters?book=Lukas</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/chapters?book=Lukas">Kopieer</button>
+                        <a href="/api/chapters?book=Lukas" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/chapters?book=Lukas</a>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/chapters?book=Lukas">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/verses</code></td>
+                      <td class="px-4 py-3 border-b"><code>/api/verses</code></td>
                       <td class="px-4 py-3 border-b">Verzen in een hoofdstuk</td>
                       <td class="px-4 py-3 border-b">
-                        <a href="/verses?book=Lukas&chapter=2" target="_blank" class="text-blue-600 underline hover:text-blue-800">/verses?book=Lukas&chapter=2</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/verses?book=Lukas&chapter=2">Kopieer</button>
+                        <a href="/api/verses?book=Lukas&chapter=2" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/verses?book=Lukas&chapter=2</a>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/verses?book=Lukas&chapter=2">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/search</code></td>
+                      <td class="px-4 py-3 border-b"><code>/api/search</code></td>
                       <td class="px-4 py-3 border-b">Zoek op tekst</td>
                       <td class="px-4 py-3 border-b">
-                        <a href="/search?query=vrede" target="_blank" class="text-blue-600 underline hover:text-blue-800">/search?query=vrede</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/search?query=vrede">Kopieer</button>
+                        <a href="/api/search?query=vrede" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/search?query=vrede</a>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/search?query=vrede">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/daytext</code></td>
+                      <td class="px-4 py-3 border-b"><code>/api/daytext</code></td>
                       <td class="px-4 py-3 border-b">Dagtekst (optioneel: <code>?seed=...</code>)</td>
                       <td class="px-4 py-3 border-b">
-                        <a href="/daytext" target="_blank" class="text-blue-600 underline hover:text-blue-800">/daytext</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/daytext">Kopieer</button>
+                        <a href="/api/daytext" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/daytext</a>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/daytext">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/versions</code></td>
+                      <td class="px-4 py-3 border-b"><code>/api/versions</code></td>
                       <td class="px-4 py-3 border-b">Beschikbare vertalingen</td>
                       <td class="px-4 py-3 border-b">
-                        <a href="/versions" target="_blank" class="text-blue-600 underline hover:text-blue-800">/versions</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/versions">Kopieer</button>
+                        <a href="/api/versions" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/versions</a>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/versions">Kopieer</button>
                       </td>
                     </tr>
                     <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3"><code>/chapter</code></td>
+                      <td class="px-4 py-3"><code>/api/chapter</code></td>
                       <td class="px-4 py-3">Alle verzen van een hoofdstuk</td>
                       <td class="px-4 py-3">
-                        <a href="/chapter?book=Genesis&chapter=1" target="_blank" class="text-blue-600 underline hover:text-blue-800">/chapter?book=Genesis&chapter=1</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/chapter?book=Genesis&chapter=1">Kopieer</button>
+                        <a href="/api/chapter?book=Genesis&chapter=1" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/chapter?book=Genesis&chapter=1</a>
+                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition" data-url="/api/chapter?book=Genesis&chapter=1">Kopieer</button>
                       </td>
                     </tr>
                   </tbody>
@@ -219,7 +221,7 @@
             </div>
             <div>
               <h3 class="text-white font-bold text-lg mb-2">Contact</h3>
-              <p>Email: <a href="mailto:alex@example.com" class="text-blue-400 hover:underline">alex@example.com</a></p>
+              <p>Email: <a href="mailto:devlamper06@gmail.com" class="text-blue-400 hover:underline">devlamper06@gmail.com</a></p>
               <p>GitHub: <a href="https://github.com/AlexLamper/bijbel-api" class="text-blue-400 hover:underline">AlexLamper/bijbel-api</a></p>
             </div>
             <div>
@@ -232,5 +234,6 @@
           </div>
           <div class="text-center mt-10 text-sm text-gray-500">&copy; 2025 Bijbel API – Alle rechten voorbehouden.</div>
         </footer>
+        <script src="script.js"></script>
       </body>
 </html>
