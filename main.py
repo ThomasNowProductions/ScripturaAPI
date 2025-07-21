@@ -11,7 +11,7 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "statenvertaling.jso
 with open(DATA_PATH, "r", encoding="utf-8") as f:
     data = json.load(f)["Statenvertaling"]
 
-app.mount("/site", StaticFiles(directory="site", html=True), name="site")
+app.mount("/", StaticFiles(directory="site", html=True), name="site")
 
 @app.get("/")
 def root():
