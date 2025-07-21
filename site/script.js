@@ -1,7 +1,7 @@
 // Zoek een specifiek vers
 const verseForm = document.getElementById('verseForm');
 const verseResult = document.getElementById('verseResult');
-verseForm.addEventListener('submit', async (e) => {
+verseForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     verseResult.textContent = 'Bezig met zoeken...';
     const book = document.getElementById('book').value;
@@ -20,18 +20,12 @@ verseForm.addEventListener('submit', async (e) => {
 // Dagtekst ophalen
 const daytextBtn = document.getElementById('getDaytext');
 const daytextResult = document.getElementById('daytextResult');
-daytextBtn.addEventListener('click', async () => {
+daytextBtn?.addEventListener('click', async () => {
     daytextResult.textContent = 'Bezig met ophalen...';
     try {
         const res = await fetch('/api/daytext');
-        console.debug('Fetch /api/daytext response:', res);
-        if (!res.ok) {
-            const text = await res.text();
-            console.debug('Response not ok:', res.status, text);
-            throw new Error(`Fout in API (${res.status}): ${text}`);
-        }
+        if (!res.ok) throw new Error('Fout in API');
         const data = await res.json();
-        console.debug('Fetched data:', data);
         daytextResult.innerHTML = `<b>${data.book} ${data.chapter}:${data.verse}</b><br>${data.text}`;
     } catch (err) {
         console.error('Kon dagtekst niet ophalen:', err);
@@ -39,9 +33,10 @@ daytextBtn.addEventListener('click', async () => {
     }
 });
 
-// Laad boekenlijst in dropdown voor hoofdstuk zoeken
+// Laad boekenlijst in dropdown
 async function loadBooksDropdown() {
     const select = document.getElementById('bookChapterSelect');
+    if (!select) return;
     select.innerHTML = '<option value="">Laden...</option>';
     try {
         const res = await fetch('/api/books');
@@ -51,35 +46,32 @@ async function loadBooksDropdown() {
         select.innerHTML = '<option>Fout bij laden</option>';
     }
 }
-if (document.getElementById('bookChapterSelect')) loadBooksDropdown();
+loadBooksDropdown();
 
-// Hoofdstuk zoeken
+// Hoofdstuk ophalen
 const chapterForm = document.getElementById('chapterForm');
 const chapterResult = document.getElementById('chapterResult');
-if (chapterForm) {
-    chapterForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        chapterResult.textContent = 'Bezig met laden...';
-        const book = document.getElementById('bookChapterSelect').value;
-        const chapter = document.getElementById('chapterNum').value;
-        try {
-            const res = await fetch(`/api/chapter?book=${encodeURIComponent(book)}&chapter=${chapter}`);
-            if (!res.ok) throw new Error('Niet gevonden of fout in API');
-            const data = await res.json();
-            let html = `<b>${data.book} ${data.chapter}</b><br>`;
-            html += '<div class="card">';
-            for (const [vers, tekst] of Object.entries(data.verses)) {
-                html += `<b>${vers}</b> ${tekst}<br>`;
-            }
-            html += '</div>';
-            chapterResult.innerHTML = html;
-        } catch (err) {
-            chapterResult.textContent = 'Kon hoofdstuk niet ophalen. Controleer je invoer.';
+chapterForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    chapterResult.textContent = 'Bezig met laden...';
+    const book = document.getElementById('bookChapterSelect').value;
+    const chapter = document.getElementById('chapterNum').value;
+    try {
+        const res = await fetch(`/api/chapter?book=${encodeURIComponent(book)}&chapter=${chapter}`);
+        if (!res.ok) throw new Error('Niet gevonden of fout in API');
+        const data = await res.json();
+        let html = `<b>${data.book} ${data.chapter}</b><br><div class="card">`;
+        for (const [vers, tekst] of Object.entries(data.verses)) {
+            html += `<b>${vers}</b> ${tekst}<br>`;
         }
-    });
-}
+        html += '</div>';
+        chapterResult.innerHTML = html;
+    } catch (err) {
+        chapterResult.textContent = 'Kon hoofdstuk niet ophalen. Controleer je invoer.';
+    }
+});
 
-// Kopieerknoppen voor API endpoints
+// Kopieerknoppen
 function setupCopyButtons() {
     const btns = document.querySelectorAll('.copy-btn');
     btns.forEach(btn => {
@@ -96,9 +88,8 @@ function setupCopyButtons() {
     });
 }
 setupCopyButtons();
-// Herhaal na dynamische updates indien nodig 
 
-// API Test functionaliteit
+// API test buttons
 function setupApiTestButtons() {
     const btns = document.querySelectorAll('.api-test-btn');
     btns.forEach(btn => {
@@ -116,4 +107,4 @@ function setupApiTestButtons() {
         });
     });
 }
-setupApiTestButtons(); 
+setupApiTestButtons();
