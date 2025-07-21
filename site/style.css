@@ -232,50 +232,347 @@ footer a {
     text-decoration: underline;
     font-weight: 500;
 }
+#routes {
+    background: #f6f8fb;
+    padding: 3.5rem 0 3rem 0;
+}
+#routes .max-w-5xl {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+#routes h2 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #3a4ca8;
+    margin-bottom: 2.2rem;
+    letter-spacing: 0.01em;
+}
 .card-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.2rem;
-    margin-bottom: 2.5rem;
+    gap: 2.2rem;
+    margin-bottom: 2.7rem;
 }
 .card-grid .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    min-height: 340px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(60,60,100,0.10);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    border: 1.5px solid #e3e8ff;
     margin-bottom: 0;
 }
-.api-endpoints.card {
+.card-grid form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin-bottom: 1rem;
+}
+.card-grid label {
+    font-weight: 500;
+    margin-bottom: 0.1rem;
+}
+.card-grid input[type="text"], .card-grid input[type="number"], .card-grid select {
     width: 100%;
-    box-sizing: border-box;
+    max-width: 100%;
     margin-left: 0;
-    margin-right: 0;
+    margin-bottom: 0.2rem;
+}
+.card-grid button {
+    align-self: flex-start;
+    margin-top: 0.5rem;
+}
+.card-grid h2 {
+    font-size: 1.18rem;
+    margin-bottom: 1.1rem;
+    color: #3a4ca8;
+}
+.api-endpoints.card {
+    background: #f7f7fa;
+    border: 1.5px solid #e3e8ff;
+    box-shadow: 0 2px 8px rgba(60,60,100,0.06);
+    border-radius: 18px;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    margin-top: 2.5rem;
+}
+.api-endpoints.card h2 {
+    font-size: 1.25rem;
+    color: #3a4ca8;
+    margin-bottom: 1.1rem;
+}
+.api-endpoints.card table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(60,60,100,0.04);
+    margin-top: 1.2rem;
+    margin-bottom: 1.2rem;
+}
+.api-endpoints.card th, .api-endpoints.card td {
+    padding: 0.85rem 0.7rem;
+    border-bottom: 1px solid #e3e8ff;
+    text-align: left;
+    font-size: 1.04rem;
+}
+.api-endpoints.card th {
+    background: #e3e8ff;
+    font-weight: 600;
+}
+.api-endpoints.card tr:last-child td {
+    border-bottom: none;
+}
+.api-endpoints .ex-link {
+    color: #2563eb;
+    text-decoration: underline;
+    font-weight: 500;
+    margin-right: 0.5rem;
+}
+.copy-btn {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.98rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s;
+    box-shadow: none;
+    outline: none;
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 0.2rem;
+    margin-top: 0;
+}
+.copy-btn:hover, .copy-btn:focus {
+    background: #1746a2;
+    color: #fff;
+}
+.api-tester {
+    margin-bottom: 2.2rem;
+}
+.api-test-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #f7f7fa;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(60,60,100,0.06);
+    margin-top: 1.2rem;
+    margin-bottom: 1.2rem;
+}
+.api-test-table th, .api-test-table td {
+    padding: 0.8rem 0.7rem;
+    border-bottom: 1px solid #e3e8ff;
+    text-align: left;
+    font-size: 1.04rem;
+}
+.api-test-table th {
+    background: #e3e8ff;
+    font-weight: 600;
+}
+.api-test-table tr:last-child td {
+    border-bottom: none;
+}
+.api-test-btn {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.98rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s;
+    box-shadow: none;
+    outline: none;
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 0.3rem;
+}
+.api-test-btn:hover, .api-test-btn:focus {
+    background: #1746a2;
+    color: #fff;
+}
+.api-test-result {
+    margin-top: 0.3rem;
+    background: #f0f3fa;
+    border-left: 4px solid #2563eb;
+    padding: 0.7rem 1rem;
+    border-radius: 6px;
+    font-size: 0.98rem;
+    min-height: 1.2rem;
+    word-break: break-word;
+    box-shadow: 0 1px 4px rgba(60,60,100,0.04);
+}
+/* --- API Tester Modern Card Style --- */
+.api-tester {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 6px 32px rgba(60,60,100,0.13);
+    padding: 2.2rem 1.7rem 1.7rem 1.7rem;
+    margin-bottom: 2.7rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1.5px solid #e3e8ff;
+    transition: box-shadow 0.2s, border 0.2s;
+}
+.api-tester:hover {
+    box-shadow: 0 12px 40px rgba(60,60,100,0.18);
+    border: 1.5px solid #3a4ca8;
+}
+.api-tester label {
+    font-weight: 600;
+    color: #3a4ca8;
+    margin-bottom: 0.3rem;
+}
+.api-tester input[type="text"], .api-tester input[type="number"], .api-tester select {
+    width: 100%;
+    margin-bottom: 1.1rem;
+    border-radius: 8px;
+    border: 1.5px solid #e3e8ff;
+    background: #f7f7fa;
+    padding: 0.6rem 0.9rem;
+    font-size: 1.05rem;
+    transition: border 0.2s;
+}
+.api-tester input:focus, .api-tester select:focus {
+    border: 1.5px solid #3a4ca8;
+}
+.api-test-btn {
+    background: linear-gradient(90deg, #3a4ca8 60%, #5e7cff 100%);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 0.6rem 1.3rem;
+    font-size: 1.08rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(60,60,100,0.08);
+    transition: background 0.15s, box-shadow 0.15s;
+    margin-top: 0.7rem;
+}
+.api-test-btn:hover, .api-test-btn:focus {
+    background: linear-gradient(90deg, #1746a2 60%, #3a4ca8 100%);
+    box-shadow: 0 4px 16px rgba(60,60,100,0.13);
+}
+.api-test-result {
+    margin-top: 1.2rem;
+    background: #f0f3fa;
+    border-left: 5px solid #3a4ca8;
+    padding: 1.2rem;
+    border-radius: 10px;
+    min-height: 2rem;
+    box-shadow: 0 2px 8px rgba(60,60,100,0.08);
+    font-size: 1.08rem;
+    word-break: break-word;
+    color: #222;
+}
+
+/* --- API Endpoints Table Modern Style --- */
+.api-endpoints.card {
+    background: #f7f7fa;
+    border: 1.5px solid #e3e8ff;
+    box-shadow: 0 4px 18px rgba(60,60,100,0.10);
+    border-radius: 18px;
+    padding: 2.2rem 1.7rem 1.7rem 1.7rem;
+    margin-top: 2.5rem;
+    margin-bottom: 2.7rem;
+}
+.api-endpoints.card h2 {
+    font-size: 1.25rem;
+    color: #3a4ca8;
+    margin-bottom: 1.1rem;
+}
+.api-endpoints.card table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(60,60,100,0.04);
+    margin-top: 1.2rem;
+    margin-bottom: 1.2rem;
+}
+.api-endpoints.card th, .api-endpoints.card td {
+    padding: 1.05rem 0.9rem;
+    border-bottom: 1px solid #e3e8ff;
+    text-align: left;
+    font-size: 1.07rem;
+}
+.api-endpoints.card th {
+    background: #e3e8ff;
+    font-weight: 700;
+    color: #3a4ca8;
+    letter-spacing: 0.01em;
+}
+.api-endpoints.card tr:last-child td {
+    border-bottom: none;
+}
+.api-endpoints.card tr:hover td {
+    background: #f0f3fa;
+    transition: background 0.18s;
+}
+.api-endpoints .ex-link {
+    color: #2563eb;
+    text-decoration: underline;
+    font-weight: 500;
+    margin-right: 0.5rem;
+    transition: color 0.15s;
+}
+.api-endpoints .ex-link:hover {
+    color: #3a4ca8;
+}
+
+/* Responsive improvements */
+@media (max-width: 700px) {
+    .api-tester, .api-endpoints.card {
+        padding: 1.1rem 0.5rem 1rem 0.5rem;
+    }
+    .api-endpoints.card table, .api-test-table {
+        font-size: 0.97rem;
+    }
 }
 @media (max-width: 1100px) {
     .card-grid {
         grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
     }
 }
-@media (max-width: 700px) {
-    main {
+@media (max-width: 800px) {
+    #routes .max-w-5xl {
         padding: 0 0.2rem;
     }
     .card-grid {
         grid-template-columns: 1fr;
-        gap: 0.7rem;
+        gap: 1.2rem;
+        max-width: 98vw;
     }
-    .card, .api-endpoints.card {
-        padding: 1.2rem 0.5rem 1rem 0.5rem;
-        margin-bottom: 1.2rem;
-    }
-    .header-content {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    .docs-btn {
-        margin-left: 0;
-        margin-top: 0.5rem;
-        width: 100%;
-        text-align: left;
-    }
-    .header-title {
-        margin-bottom: 0.2rem;
+    .card-grid .card, .api-endpoints.card {
+        padding: 1.2rem 0.7rem 1rem 0.7rem;
+        min-height: 0;
     }
 } 
+
+div.api-endpoints.card {
+    background: #f7f7fa !important;
+    border: 1.5px solid #e3e8ff !important;
+    box-shadow: 0 4px 18px rgba(60,60,100,0.10) !important;
+    border-radius: 18px !important;
+    padding: 2.2rem 1.7rem 1.7rem 1.7rem !important;
+    margin-top: 2.5rem !important;
+    margin-bottom: 2.7rem !important;
+}
+div.api-endpoints.card table {
+    background: #fff !important;
+    border-radius: 14px !important;
+    box-shadow: 0 2px 8px rgba(60,60,100,0.04) !important;
+}
