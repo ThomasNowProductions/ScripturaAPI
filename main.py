@@ -1,23 +1,22 @@
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query, HTTPException, APIRouter
 import json, random
 import os
 from typing import List
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+api_router = APIRouter()
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "statenvertaling.json")
 
 with open(DATA_PATH, "r", encoding="utf-8") as f:
     data = json.load(f)["Statenvertaling"]
 
-app.mount("/", StaticFiles(directory="site", html=True), name="site")
-
-@app.get("/")
+@api_router.get("/", tags=["Root"])
 def root():
-    return {"message": "Welkom bij de Bijbel-API! Zie /docs voor documentatie."}
+    return {"message": "Welkom bij de Bijbel-API! Zie /api/docs voor documentatie."}
 
-@app.get("/random")
+@api_router.get("/random")
 def get_random_verse():
     boek = random.choice(list(data.keys()))
     hoofdstuk = random.choice(list(data[boek].keys()))
@@ -25,7 +24,7 @@ def get_random_verse():
     tekst = data[boek][hoofdstuk][vers]
     return {"book": boek, "chapter": hoofdstuk, "verse": vers, "text": tekst}
 
-@app.get("/verse", summary="Haal een specifiek vers op", description="Geef boek, hoofdstuk en versnummer op.")
+@api_router.get("/verse", summary="Haal een specifiek vers op", description="Geef boek, hoofdstuk en versnummer op.")
 def get_verse(book: str = Query(..., description="Naam van het bijbelboek"),
               chapter: int = Query(..., description="Hoofdstuknummer"),
               verse: int = Query(..., description="Versnummer")):
@@ -35,7 +34,7 @@ def get_verse(book: str = Query(..., description="Naam van het bijbelboek"),
         raise HTTPException(status_code=404, detail="Vers niet gevonden")
     return {"book": book, "chapter": chapter, "verse": verse, "text": tekst}
 
-@app.get("/passage")
+@api_router.get("/passage")
 def get_passage(book: str, chapter: int, start: int, end: int):
     try:
         verzen = {
@@ -46,11 +45,11 @@ def get_passage(book: str, chapter: int, start: int, end: int):
         raise HTTPException(status_code=404, detail="Passage niet gevonden")
     return {"book": book, "chapter": chapter, "verses": verzen}
 
-@app.get("/books")
+@api_router.get("/books")
 def get_books():
     return list(data.keys())
 
-@app.get("/chapters")
+@api_router.get("/chapters")
 def get_chapters(book: str):
     try:
         hoofdstukken = list(data[book].keys())
@@ -58,7 +57,7 @@ def get_chapters(book: str):
         raise HTTPException(status_code=404, detail="Boek niet gevonden")
     return {"book": book, "chapters": hoofdstukken}
 
-@app.get("/verses")
+@api_router.get("/verses")
 def get_verses(book: str, chapter: int):
     try:
         verzen = list(data[book][str(chapter)].keys())
@@ -66,7 +65,7 @@ def get_verses(book: str, chapter: int):
         raise HTTPException(status_code=404, detail="Hoofdstuk niet gevonden")
     return {"book": book, "chapter": chapter, "verses": verzen}
 
-@app.get("/search", summary="Zoek in de bijbeltekst", description="Zoek naar verzen die een bepaalde tekst bevatten.")
+@api_router.get("/search", summary="Zoek in de bijbeltekst", description="Zoek naar verzen die een bepaalde tekst bevatten.")
 def search_verses(query: str) -> dict:
     results: List[dict] = []
     for boek, hoofdstukken in data.items():
@@ -81,7 +80,7 @@ def search_verses(query: str) -> dict:
                     })
     return {"results": results}
 
-@app.get("/daytext", summary="Genereer een vaste dagtekst", description="Genereert een dagtekst op basis van de dag of een optionele seed.")
+@api_router.get("/daytext", summary="Genereer een vaste dagtekst", description="Genereert een dagtekst op basis van de dag of een optionele seed.")
 def daytext(seed: int = None):
     import datetime
     import hashlib
@@ -96,15 +95,18 @@ def daytext(seed: int = None):
     tekst = data[boek][hoofdstuk][vers]
     return {"book": boek, "chapter": hoofdstuk, "verse": vers, "text": tekst, "seed": seed}
 
-@app.get("/versions", summary="Beschikbare vertalingen", description="Geeft een lijst van beschikbare bijbelvertalingen.")
+@api_router.get("/versions", summary="Beschikbare vertalingen", description="Geeft een lijst van beschikbare bijbelvertalingen.")
 def get_versions():
     # In de toekomst uitbreidbaar, nu alleen Statenvertaling
     return {"versions": ["Statenvertaling"]}
 
-@app.get("/chapter", summary="Geef alle verzen van een hoofdstuk", description="Geeft alle verzen van een opgegeven boek en hoofdstuk.")
+@api_router.get("/chapter", summary="Geef alle verzen van een hoofdstuk", description="Geeft alle verzen van een opgegeven boek en hoofdstuk.")
 def get_chapter(book: str, chapter: int):
     try:
         verzen = data[book][str(chapter)]
     except KeyError:
         raise HTTPException(status_code=404, detail="Hoofdstuk niet gevonden")
     return {"book": book, "chapter": chapter, "verses": verzen}
+
+app.include_router(api_router, prefix="/api")
+app.mount("/", StaticFiles(directory="site", html=True), name="site")
