@@ -2,13 +2,26 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi import Security, Depends
+from fastapi.security import APIKeyHeader
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
 import json
 import os
 import random
 import hashlib
 from datetime import date
+from models import APIKey, Base
+from dotenv import load_dotenv
+import stripe
+import uuid
+from fastapi import Request
 
 app = FastAPI()
+
+# Load environment variables from .env file
+load_dotenv()
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
 
 # CORS settings
 app.add_middleware(
@@ -178,3 +191,57 @@ def get_chapter(book: str, chapter: str):
         }
     except KeyError:
         raise HTTPException(status_code=404, detail="Hoofdstuk niet gevonden")
+
+# --- API-key authenticatie ---
+
+# Database setup (SQLite)
+engine = create_engine("sqlite:///./test.db")
+SessionLocal = sessionmaker(bind=engine)
+Base.metadata.create_all(bind=engine)
+
+api_key_header = APIKeyHeader(name="x-api-key")
+
+def is_valid_key_in_db(key: str):
+    session = SessionLocal()
+    api_key = session.query(APIKey).filter_by(api_key=key, active=True).first()
+    session.close()
+    return api_key is not None
+
+def verify_api_key(key: str = Security(api_key_header)):
+    if not is_valid_key_in_db(key):
+        raise HTTPException(status_code=403, detail="Invalid or expired key")
+
+@app.get("/secure-data")
+def secure_data(_: str = Depends(verify_api_key)):
+    return {"message": "Je bent geauthenticeerd!"}
+# --- einde authenticatie ---
+
+@app.post("/stripe/webhook")
+async def stripe_webhook(request: Request):
+    payload = await request.body()
+    sig_header = request.headers.get("stripe-signature")
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, STRIPE_WEBHOOK_SECRET
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    session = SessionLocal()
+
+    if event["type"] == "checkout.session.completed":
+        email = event["data"]["object"].get("customer_email")
+        if email:
+            api_key = str(uuid.uuid4())
+            session.add(APIKey(user_email=email, api_key=api_key, active=True))
+            session.commit()
+            # TODO: Stuur API-key per e-mail naar gebruiker
+    elif event["type"] in ["invoice.payment_failed", "customer.subscription.deleted"]:
+        email = event["data"]["object"].get("customer_email")
+        if email:
+            key = session.query(APIKey).filter_by(user_email=email).first()
+            if key:
+                key.active = False
+                session.commit()
+    session.close()
+    return {"status": "success"}
