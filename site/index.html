@@ -1,249 +1,659 @@
 <!DOCTYPE html>
-<html lang="nl">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Bijbel API - De Statenvertaling</title>
-        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-        <style>
-          body {
-            font-family: 'Inter', sans-serif;
-          }
-        </style>
-      </head>
-      
-      <body class="bg-gray-50 text-gray-800">
-        <!-- Navbar -->
-        <header class="bg-white shadow-md">
-          <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-blue-600">Bijbel API</h1>
-            <nav class="space-x-6">
-              <a href="#features" class="text-gray-700 hover:text-blue-600 font-medium">Features</a>
-              <a href="#dagtekst" class="text-gray-700 hover:text-blue-600 font-medium">Dagtekst</a>
-              <a href="#routes" class="text-gray-700 hover:text-blue-600 font-medium">API Routes</a>
-              <a href="#footer" class="text-gray-700 hover:text-blue-600 font-medium">Contact</a>
+<html lang="nl" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bijbel API - De beste Nederlandse Bijbel API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        @layer base {
+            :root {
+                --background: 0 0% 100%;
+                --foreground: 220 15% 25%;
+                --card: 0 0% 100%;
+                --card-foreground: 220 15% 25%;
+                --popover: 0 0% 100%;
+                --popover-foreground: 220 15% 25%;
+                --primary: 220 60% 20%;
+                --primary-foreground: 0 0% 98%;
+                --secondary: 210 30% 96%;
+                --secondary-foreground: 220 60% 20%;
+                --muted: 210 20% 92%;
+                --muted-foreground: 215 15% 45%;
+                --accent: 210 20% 92%;
+                --accent-foreground: 220 60% 20%;
+                --destructive: 0 84% 60%;
+                --destructive-foreground: 0 0% 98%;
+                --border: 220 13% 91%;
+                --input: 220 13% 91%;
+                --ring: 220 60% 20%;
+                --radius: 0.5rem;
+            }
+        }
+        @layer components {
+            .container {
+                max-width: 1200px;
+            }
+            .btn {
+                @apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+            }
+            .btn-primary {
+                @apply bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 px-4 py-2;
+            }
+            .btn-secondary {
+                @apply bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-10 px-4 py-2;
+            }
+            .input {
+                @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+            }
+            .label {
+                @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
+            }
+            .card {
+                @apply rounded-xl border bg-card text-card-foreground shadow;
+            }
+            .card-header {
+                @apply flex flex-col space-y-1.5 p-6;
+            }
+            .card-title {
+                @apply font-semibold leading-none tracking-tight;
+            }
+            .card-description {
+                @apply text-sm text-muted-foreground;
+            }
+            .card-content {
+                @apply p-6 pt-0;
+            }
+            .card-footer {
+                @apply flex items-center p-6 pt-0;
+            }
+        }
+        /* Custom styles for the API test buttons and results */
+        .api-test-btn.copied {
+            background-color: #28a745; /* Green for copied */
+            color: white;
+        }
+        .copy-btn {
+            @apply btn-secondary py-1 px-2 text-xs;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(220, 13%, 91%)",
+                        input: "hsl(220, 13%, 91%)",
+                        ring: "hsl(220, 60%, 20%)",
+                        background: "hsl(0, 0%, 100%)",
+                        foreground: "hsl(220, 15%, 25%)",
+                        primary: {
+                            DEFAULT: "hsl(220, 60%, 20%)",
+                            foreground: "hsl(0, 0%, 98%)"
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(210, 30%, 96%)",
+                            foreground: "hsl(220, 60%, 20%)"
+                        },
+                        muted: {
+                            DEFAULT: "hsl(210, 20%, 94%)",
+                            foreground: "hsl(220, 15%, 50%)"
+                        },
+                        accent: {
+                            DEFAULT: "hsl(43, 90%, 60%)",
+                            foreground: "hsl(220, 60%, 20%)"
+                        },
+                        destructive: {
+                            DEFAULT: "hsl(0, 84.2%, 60.2%)",
+                            foreground: "hsl(210, 40%, 98%)"
+                        },
+                        card: {
+                            DEFAULT: "hsl(0, 0%, 100%)",
+                            foreground: "hsl(220, 15%, 25%)"
+                        },
+                        popover: {
+                            DEFAULT: "hsl(0, 0%, 100%)",
+                            foreground: "hsl(220, 15%, 25%)"
+                        },
+                        brand: {
+                            50: "hsl(43, 100%, 97%)",
+                            100: "hsl(43, 95%, 90%)",
+                            200: "hsl(43, 90%, 80%)",
+                            300: "hsl(43, 90%, 70%)",
+                            400: "hsl(43, 90%, 60%)",
+                            500: "hsl(43, 85%, 50%)",
+                            600: "hsl(43, 80%, 40%)",
+                            700: "hsl(43, 75%, 30%)",
+                            800: "hsl(43, 70%, 20%)",
+                            900: "hsl(43, 65%, 10%)"
+                        },
+                        bible: {
+                            50: "hsl(220, 30%, 98%)",
+                            100: "hsl(220, 25%, 94%)",
+                            200: "hsl(220, 20%, 88%)",
+                            300: "hsl(220, 18%, 75%)",
+                            400: "hsl(220, 16%, 60%)",
+                            500: "hsl(220, 15%, 45%)",
+                            600: "hsl(220, 15%, 35%)",
+                            700: "hsl(220, 18%, 25%)",
+                            800: "hsl(220, 20%, 15%)",
+                            900: "hsl(220, 25%, 8%)"
+                        }
+                    },
+                    borderRadius: {
+                        lg: "0.75rem",
+                        md: "calc(0.75rem - 2px)",
+                        sm: "calc(0.75rem - 4px)"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .bg-gradient-to-br {
+            background: linear-gradient(to bottom right, hsl(0, 0%, 100%), hsl(0, 0%, 100%), hsl(220, 30%, 98%));
+        }
+        .bg-gradient-to-r {
+            background: linear-gradient(to right, hsl(220, 60%, 20%), hsl(43, 85%, 50%));
+        }
+        .text-transparent {
+            color: transparent;
+        }
+        .bg-clip-text {
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+        .backdrop-blur {
+            backdrop-filter: blur(8px);
+        }
+        @supports (backdrop-filter: blur(8px)) {
+            .supports-backdrop-filter\:bg-background\/60 {
+                background-color: hsl(0, 0%, 100%, 0.6);
+            }
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        @media (min-width: 640px) {
+            .container {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+        }
+        @media (min-width: 1024px) {
+            .container {
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen bg-background text-foreground">
+    <header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+        <div class="container flex h-16 items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <a href="#" class="flex items-center space-x-2">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                        <i data-lucide="book" class="h-5 w-5 text-primary-foreground"></i>
+                    </div>
+                    <span class="text-xl font-bold text-foreground">Bijbel API</span>
+                </a>
+            </div>
+
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="#features" class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">Features</a>
+                <a href="#dagtekst" class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">Dagtekst</a>
+                <a href="#api-routes" class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">API Routes</a>
+                <a href="#contact" class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">Contact</a>
             </nav>
-          </div>
-        </header>
-      
-        <!-- Hero Section -->
-        <section class="bg-gradient-to-br from-blue-50 to-white py-20">
-          <div class="max-w-4xl mx-auto px-4 text-center">
-            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4">
-              De beste Nederlandse <span class="text-blue-600">Bijbel API</span>
-            </h2>
-            <p class="text-lg md:text-xl text-gray-600 mb-8">
-              Gebruiksvriendelijke toegang tot de volledige Statenvertaling, ideaal voor ontwikkelaars en studieprojecten.
-            </p>
-            <a href="#routes" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition">Ontdek de routes</a>
-          </div>
-        </section>
-      
-        <!-- Features -->
-        <section id="features" class="py-16 bg-white">
-          <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-10">
-            <div class="bg-blue-50 p-6 rounded-xl shadow">
-              <h3 class="text-xl font-semibold text-blue-700 mb-2">Volledige Statenvertaling</h3>
-              <p>Toegang tot alle boeken, hoofdstukken en verzen via gestructureerde JSON API.</p>
+
+            <div class="flex items-center space-x-4">
+                <a href="#api-routes" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 hidden sm:inline-flex">
+                    Documentatie
+                </a>
+                
+                <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10 md:hidden" onclick="toggleMobileMenu()">
+                    <i data-lucide="menu" class="h-5 w-5"></i>
+                </button>
             </div>
-            <div class="bg-blue-50 p-6 rounded-xl shadow">
-              <h3 class="text-xl font-semibold text-blue-700 mb-2">Dagelijkse tekst</h3>
-              <p>Genereer elke dag een willekeurige Bijbeltekst ter inspiratie of als dagtekst.</p>
+        </div>
+
+        <div id="mobile-menu" class="md:hidden border-t bg-background hidden">
+            <nav class="container py-4 space-y-2">
+                <a href="#features" class="block py-2 text-sm font-medium transition-colors hover:text-primary text-muted-foreground">Features</a>
+                <a href="#dagtekst" class="block py-2 text-sm font-medium transition-colors hover:text-primary text-muted-foreground">Dagtekst</a>
+                <a href="#api-routes" class="block py-2 text-sm font-medium transition-colors hover:text-primary text-muted-foreground">API Routes</a>
+                <a href="#contact" class="block py-2 text-sm font-medium transition-colors hover:text-primary text-muted-foreground">Contact</a>
+                <div class="pt-2">
+                    <a href="#api-routes" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full">
+                        Documentatie
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="relative py-20 lg:py-32">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground mb-6 text-brand-600 border-gray-300">
+                    <i data-lucide="book" class="w-4 h-4 mr-2"></i>
+                    Nederlandse Bijbel API
+                </div>
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6 text-primary">
+                    De beste Nederlandse 
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-800">
+                        Bijbel API
+                    </span>
+                </h1>
+                <p class="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
+                    Gebruiksvriendelijke toegang tot de volledige Statenvertaling, ideaal voor ontwikkelaars en studieprojecten.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#api-routes" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 rounded-md px-8">
+                        <i data-lucide="code" class="mr-2 h-5 w-5"></i>
+                        Bekijk documentatie
+                    </a>
+                    <a href="#dagtekst" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-11 rounded-md px-8">
+                        <i data-lucide="calendar" class="mr-2 h-5 w-5"></i>
+                        Probeer dagtekst
+                    </a>
+                </div>
             </div>
-            <div class="bg-blue-50 p-6 rounded-xl shadow">
-              <h3 class="text-xl font-semibold text-blue-700 mb-2">Eenvoudig te gebruiken</h3>
-              <p>Gebruik FastAPI en moderne documentatie (Swagger/OpenAPI) om snel te integreren.</p>
+        </div>
+    </section>
+
+    <section id="features" class="py-20 bg-muted/30">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Krachtige Features</h2>
+                <p class="text-xl text-muted-foreground">Alles wat je nodig hebt voor je Bijbel-gerelateerde project</p>
             </div>
-          </div>
-        </section>
-      
-        <!-- Dagtekst -->
-        <section id="dagtekst" class="py-16 bg-gray-100">
-          <div class="max-w-3xl mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold mb-4">Voorbeeld Dagtekst</h2>
-            <blockquote class="italic text-xl text-gray-700">“Want God had de wereld alzo lief…”</blockquote>
-            <p class="mt-4 text-gray-500">Johannes 3:16 (Statenvertaling)</p>
-          </div>
-        </section>
-      
-        <!-- Routes -->
-        <section id="routes" class="py-16 bg-white">
-          <div class="max-w-5xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-10">Beschikbare API Routes</h2>
-            <div class="grid md:grid-cols-3 gap-8 mb-10">
-                <!-- Zoek een specifiek vers -->
-                <div class="bg-white border border-blue-100 rounded-xl shadow p-6 flex flex-col">
-                  <h2 class="text-base font-semibold text-blue-900 mb-2">Zoek een specifiek vers</h2>
-                  <form id="verseForm" class="flex flex-col gap-3">
-                      <label class="font-medium text-blue-900">Boek:
-                          <input type="text" id="book" required placeholder="Genesis" class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition" />
-                      </label>
-                      <label class="font-medium text-blue-900">Hoofdstuk:
-                          <input type="number" id="chapter" required min="1" placeholder="1" class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition" />
-                      </label>
-                      <label class="font-medium text-blue-900">Vers:
-                          <input type="number" id="verse" required min="1" placeholder="1" class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition" />
-                      </label>
-                      <button type="submit" class="mt-2 border border-blue-500 text-blue-700 font-semibold py-2 px-4 rounded-lg bg-white hover:bg-blue-600 hover:text-white transition">
-                          Zoek
-                      </button>
-                  </form>
-                  <div id="verseResult" class="mt-4 bg-gray-50 border-l-4 border-blue-200 rounded p-3 text-gray-800 shadow-inner min-h-[2rem]"></div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="rounded-lg border bg-card text-card-foreground shadow-sm text-center">
+                    <div class="flex flex-col space-y-1.5 p-6">
+                        <div class="mx-auto w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                            <i data-lucide="book-open" class="h-6 w-6 text-primary"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold leading-none tracking-tight">Volledige Statenvertaling</h3>
+                    </div>
+                    <div class="p-6 pt-0">
+                        <p class="text-muted-foreground">Toegang tot alle boeken, hoofdstukken en verzen via gestructureerde JSON API.</p>
+                    </div>
                 </div>
 
-                <!-- Dagtekst -->
-                <div class="bg-white border border-blue-100 rounded-xl shadow p-6 flex flex-col">
-                  <h2 class="text-base font-semibold text-blue-900 mb-2">Dagtekst</h2>
-                  <button id="getDaytext" class="border border-blue-500 text-blue-700 font-semibold py-2 px-4 rounded-lg bg-white hover:bg-blue-600 hover:text-white transition mb-3">
-                      Genereer dagtekst
-                  </button>
-                  <div id="daytextResult" class="bg-gray-50 border-l-4 border-blue-200 rounded p-3 text-gray-800 shadow-inner min-h-[2rem]"></div>
+                <div class="rounded-lg border bg-card text-card-foreground shadow-sm text-center">
+                    <div class="flex flex-col space-y-1.5 p-6">
+                        <div class="mx-auto w-12 h-12 bg-brand-400/10 rounded-lg flex items-center justify-center mb-4">
+                            <i data-lucide="heart" class="h-6 w-6 text-brand-600"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold leading-none tracking-tight">Dagelijkse tekst</h3>
+                    </div>
+                    <div class="p-6 pt-0">
+                        <p class="text-muted-foreground">Genereer elke dag een willekeurige Bijbeltekst ter inspiratie of als dagtekst.</p>
+                    </div>
                 </div>
 
-                <!-- Bekijk een heel hoofdstuk -->
-                <div class="bg-white border border-blue-100 rounded-xl shadow p-6 flex flex-col">
-                  <h2 class="text-base font-semibold text-blue-900 mb-2">Bekijk een heel hoofdstuk</h2>
-                  <form id="chapterForm" class="flex flex-col gap-3">
-                      <label class="font-medium text-blue-900">Boek:
-                          <select id="bookChapterSelect" required class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition">
-                              <option value="">Laden...</option>
-                          </select>
-                      </label>
-                      <label class="font-medium text-blue-900">Hoofdstuk:
-                          <input type="number" id="chapterNum" required min="1" placeholder="1" class="mt-1 block w-full rounded-md border border-blue-200 bg-white px-3 py-2 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 transition" />
-                      </label>
-                      <button type="submit" class="mt-2 border border-blue-500 text-blue-700 font-semibold py-2 px-4 rounded-lg bg-white hover:bg-blue-600 hover:text-white transition">
-                          Toon hoofdstuk
-                      </button>
-                  </form>
-                  <div id="chapterResult" class="mt-4 bg-gray-50 border-l-4 border-blue-200 rounded p-3 text-gray-800 shadow-inner min-h-[2rem]"></div>
+                <div class="rounded-lg border bg-card text-card-foreground shadow-sm text-center">
+                    <div class="flex flex-col space-y-1.5 p-6">
+                        <div class="mx-auto w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-4">
+                            <i data-lucide="zap" class="h-6 w-6 text-accent-foreground"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold leading-none tracking-tight">Eenvoudig te gebruiken</h3>
+                    </div>
+                    <div class="p-6 pt-0">
+                        <p class="text-muted-foreground">Gebruik FastAPI en moderne documentatie (Swagger/OpenAPI) om snel te integreren.</p>
+                    </div>
                 </div>
             </div>
-            <div class="bg-blue-50 border border-blue-100 rounded-2xl shadow-lg p-8 my-10">
-              <h2 class="text-xl font-bold text-blue-700 mb-2">API Endpoints</h2>
-              <p class="mb-6 text-gray-700">Hieronder vind je een overzicht van alle API endpoints. Klik op een voorbeeld-URL om deze te openen, of kopieer de URL met één klik.<br>
-                <a href="/api/docs" target="_blank" class="inline-block mt-2 text-blue-700 underline hover:text-blue-900 font-semibold">Bekijk de API-documentatie (Swagger UI)</a>
-              </p>
-              <div class="overflow-x-auto">
-                <table class="min-w-full bg-white rounded-xl shadow">
-                  <thead>
-                    <tr>
-                      <th class="px-4 py-3 bg-blue-100 text-blue-800 font-semibold text-left">Endpoint</th>
-                      <th class="px-4 py-3 bg-blue-100 text-blue-800 font-semibold text-left">Beschrijving</th>
-                      <th class="px-4 py-3 bg-blue-100 text-blue-800 font-semibold text-left">Voorbeeld</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/api/random</code></td>
-                      <td class="px-4 py-3 border-b">Willekeurig vers</td>
-                      <td class="px-4 py-3 border-b">
-                        <a href="/api/random" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/random</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/random">Kopieer</button>
-                      </td>
-                    </tr>
-                    <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/api/verse</code></td>
-                      <td class="px-4 py-3 border-b">Specifiek vers</td>
-                      <td class="px-4 py-3 border-b">
-                        <a href="/api/verse?book=Genesis&chapter=1&verse=1" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/verse?book=Genesis&chapter=1&verse=1</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/verse?book=Genesis&chapter=1&verse=1">Kopieer</button>
-                      </td>
-                    </tr>
-                    <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/api/passage</code></td>
-                      <td class="px-4 py-3 border-b">Meerdere verzen uit één hoofdstuk</td>
-                      <td class="px-4 py-3 border-b">
-                        <a href="/api/passage?book=Lukas&chapter=2&start=1&end=10" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/passage?book=Lukas&chapter=2&start=1&end=10</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/passage?book=Lukas&chapter=2&start=1&end=10">Kopieer</button>
-                      </td>
-                    </tr>
-                    <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/api/books</code></td>
-                      <td class="px-4 py-3 border-b">Lijst van boeken</td>
-                      <td class="px-4 py-3 border-b">
-                        <a href="/api/books" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/books</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/books">Kopieer</button>
-                      </td>
-                    </tr>
-                    <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/api/chapters</code></td>
-                      <td class="px-4 py-3 border-b">Hoofdstukken in een boek</td>
-                      <td class="px-4 py-3 border-b">
-                        <a href="/api/chapters?book=Lukas" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/chapters?book=Lukas</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/chapters?book=Lukas">Kopieer</button>
-                      </td>
-                    </tr>
-                    <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/api/verses</code></td>
-                      <td class="px-4 py-3 border-b">Verzen in een hoofdstuk</td>
-                      <td class="px-4 py-3 border-b">
-                        <a href="/api/verses?book=Lukas&chapter=2" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/verses?book=Lukas&chapter=2</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/verses?book=Lukas&chapter=2">Kopieer</button>
-                      </td>
-                    </tr>
-                    <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/api/search</code></td>
-                      <td class="px-4 py-3 border-b">Zoek op tekst</td>
-                      <td class="px-4 py-3 border-b">
-                        <a href="/api/search?query=vrede" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/search?query=vrede</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/search?query=vrede">Kopieer</button>
-                      </td>
-                    </tr>
-                    <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/api/daytext</code></td>
-                      <td class="px-4 py-3 border-b">Dagtekst (optioneel: <code>?seed=...</code>)</td>
-                      <td class="px-4 py-3 border-b">
-                        <a href="/api/daytext" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/daytext</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/daytext">Kopieer</button>
-                      </td>
-                    </tr>
-                    <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3 border-b"><code>/api/versions</code></td>
-                      <td class="px-4 py-3 border-b">Beschikbare vertalingen</td>
-                      <td class="px-4 py-3 border-b">
-                        <a href="/api/versions" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/versions</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/versions">Kopieer</button>
-                      </td>
-                    </tr>
-                    <tr class="hover:bg-blue-50 transition">
-                      <td class="px-4 py-3"><code>/api/chapter</code></td>
-                      <td class="px-4 py-3">Alle verzen van een hoofdstuk</td>
-                      <td class="px-4 py-3">
-                        <a href="/api/chapter?book=Genesis&chapter=1" target="_blank" class="text-blue-600 underline hover:text-blue-800">/api/chapter?book=Genesis&chapter=1</a>
-                        <button class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition copy-btn" data-url="/api/chapter?book=Genesis&chapter=1">Kopieer</button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+        </div>
+    </section>
+
+    <section id="demo" class="container mx-auto px-4 py-16">
+        <h2 class="text-3xl font-bold text-primary mb-8 text-center">Live Demo</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="card p-6">
+                <h3 class="card-title text-2xl mb-4">Dagtekst</h3>
+                <button id="getDaytext" class="btn btn-primary w-full">Genereer Dagtekst</button>
+                <div id="daytextResult" class="mt-4 p-3 bg-muted rounded-md text-sm">
+                    De dagtekst verschijnt hier.
+                </div>
             </div>
-          </div>
-        </section>
-      
-        <!-- Footer -->
-        <footer id="footer" class="bg-gray-800 text-gray-300 py-10">
-          <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8">
-            <div>
-              <h3 class="text-white font-bold text-lg mb-2">Over de API</h3>
-              <p>Een open en gratis te gebruiken API gebaseerd op de Statenvertaling. Voor persoonlijk gebruik, studie of projecten.</p>
+
+            <div class="card p-6">
+                <h3 class="card-title text-2xl mb-4">Zoek een specifiek vers</h3>
+                <form id="verseForm">
+                    <div class="mb-4">
+                        <label for="book" class="label">Boek:</label>
+                        <input type="text" id="book" class="input mt-1" placeholder="Bijv. Johannes" required>
+                    </div>
+                    <div class="mb-4 flex space-x-4">
+                        <div class="w-1/2">
+                            <label for="chapter" class="label">Hoofdstuk:</label>
+                            <input type="number" id="chapter" class="input mt-1" placeholder="Bijv. 3" required>
+                        </div>
+                        <div class="w-1/2">
+                            <label for="verse" class="label">Vers:</label>
+                            <input type="number" id="verse" class="input mt-1" placeholder="Bijv. 16" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-full">Zoek Vers</button>
+                </form>
+                <div id="verseResult" class="mt-4 p-3 bg-muted rounded-md text-sm">
+                    Het gezochte vers verschijnt hier.
+                </div>
             </div>
-            <div>
-              <h3 class="text-white font-bold text-lg mb-2">Contact</h3>
-              <p>Email: <a href="mailto:devlamper06@gmail.com" class="text-blue-400 hover:underline">devlamper06@gmail.com</a></p>
-              <p>GitHub: <a href="https://github.com/AlexLamper/bijbel-api" class="text-blue-400 hover:underline">AlexLamper/bijbel-api</a></p>
+
+            <div class="card p-6">
+                <h3 class="card-title text-2xl mb-4">Bekijk een heel hoofdstuk</h3>
+                <form id="chapterForm">
+                    <div class="mb-4">
+                        <label for="bookChapterSelect" class="label">Boek:</label>
+                        <select id="bookChapterSelect" class="input mt-1" required>
+                            <option value="">Selecteer een boek...</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="chapterNum" class="label">Hoofdstuk:</label>
+                        <input type="number" id="chapterNum" class="input mt-1" placeholder="Bijv. 1" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-full">Toon Hoofdstuk</button>
+                </form>
+                <div id="chapterResult" class="mt-4 p-3 bg-muted rounded-md text-sm max-h-60 overflow-y-auto">
+                    Het hoofdstuk verschijnt hier.
+                </div>
             </div>
-            <div>
-              <h3 class="text-white font-bold text-lg mb-2">Bronnen</h3>
-              <ul class="space-y-1">
-                <li><a href="https://bijbel.gbv.nl" class="hover:underline text-blue-400">Statenvertaling (GBV)</a></li>
-                <li><a href="https://render.com" class="hover:underline text-blue-400">Render Hosting</a></li>
-              </ul>
+        </div>
+    </section>
+
+    <section id="api-routes" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">API Endpoints</h2>
+                <p class="text-xl text-muted-foreground mb-8">
+                    Hieronder vind je een overzicht van alle API endpoints. Klik op een voorbeeld-URL om deze te openen, 
+                    of kopieer de URL met één klik.
+                </p>
+                <a href="#" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 inline-flex items-center">
+                    <i data-lucide="external-link" class="mr-2 h-4 w-4"></i>
+                    Bekijk de API-documentatie (Swagger UI)
+                </a>
             </div>
-          </div>
-          <div class="text-center mt-10 text-sm text-gray-500">&copy; 2025 Bijbel API – Alle rechten voorbehouden.</div>
-        </footer>
-        <script src="script.js"></script>
-      </body>
+
+            <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                <div class="p-0">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-muted">
+                                <tr>
+                                    <th class="text-left p-4 font-semibold">Endpoint</th>
+                                    <th class="text-left p-4 font-semibold">Beschrijving</th>
+                                    <th class="text-left p-4 font-semibold">Voorbeeld</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t">
+                                    <td class="p-4">
+                                        <code class="text-sm bg-muted px-2 py-1 rounded">/api/random</code>
+                                    </td>
+                                    <td class="p-4 text-muted-foreground">Willekeurig vers</td>
+                                    <td class="p-4">
+                                        <div class="flex items-center space-x-2">
+                                            <code class="text-sm bg-muted px-2 py-1 rounded flex-1">/api/random</code>
+                                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3" onclick="copyToClipboard('/api/random')">
+                                                <i data-lucide="copy" class="h-4 w-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="p-4">
+                                        <code class="text-sm bg-muted px-2 py-1 rounded">/api/verse</code>
+                                    </td>
+                                    <td class="p-4 text-muted-foreground">Specifiek vers</td>
+                                    <td class="p-4">
+                                        <div class="flex items-center space-x-2">
+                                            <code class="text-sm bg-muted px-2 py-1 rounded flex-1">/api/verse?book=Genesis&chapter=1&verse=1</code>
+                                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3" onclick="copyToClipboard('/api/verse?book=Genesis&chapter=1&verse=1')">
+                                                <i data-lucide="copy" class="h-4 w-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="p-4">
+                                        <code class="text-sm bg-muted px-2 py-1 rounded">/api/passage</code>
+                                    </td>
+                                    <td class="p-4 text-muted-foreground">Meerdere verzen uit één hoofdstuk</td>
+                                    <td class="p-4">
+                                        <div class="flex items-center space-x-2">
+                                            <code class="text-sm bg-muted px-2 py-1 rounded flex-1">/api/passage?book=Lukas&chapter=2&start=1&end=10</code>
+                                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3" onclick="copyToClipboard('/api/passage?book=Lukas&chapter=2&start=1&end=10')">
+                                                <i data-lucide="copy" class="h-4 w-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="p-4">
+                                        <code class="text-sm bg-muted px-2 py-1 rounded">/api/books</code>
+                                    </td>
+                                    <td class="p-4 text-muted-foreground">Lijst van boeken</td>
+                                    <td class="p-4">
+                                        <div class="flex items-center space-x-2">
+                                            <code class="text-sm bg-muted px-2 py-1 rounded flex-1">/api/books</code>
+                                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3" onclick="copyToClipboard('/api/books')">
+                                                <i data-lucide="copy" class="h-4 w-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="p-4">
+                                        <code class="text-sm bg-muted px-2 py-1 rounded">/api/chapters</code>
+                                    </td>
+                                    <td class="p-4 text-muted-foreground">Hoofdstukken in een boek</td>
+                                    <td class="p-4">
+                                        <div class="flex items-center space-x-2">
+                                            <code class="text-sm bg-muted px-2 py-1 rounded flex-1">/api/chapters?book=Lukas</code>
+                                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3" onclick="copyToClipboard('/api/chapters?book=Lukas')">
+                                                <i data-lucide="copy" class="h-4 w-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="p-4">
+                                        <code class="text-sm bg-muted px-2 py-1 rounded">/api/verses</code>
+                                    </td>
+                                    <td class="p-4 text-muted-foreground">Verzen in een hoofdstuk</td>
+                                    <td class="p-4">
+                                        <div class="flex items-center space-x-2">
+                                            <code class="text-sm bg-muted px-2 py-1 rounded flex-1">/api/verses?book=Lukas&chapter=2</code>
+                                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3" onclick="copyToClipboard('/api/verses?book=Lukas&chapter=2')">
+                                                <i data-lucide="copy" class="h-4 w-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="p-4">
+                                        <code class="text-sm bg-muted px-2 py-1 rounded">/api/search</code>
+                                    </td>
+                                    <td class="p-4 text-muted-foreground">Zoek op tekst</td>
+                                    <td class="p-4">
+                                        <div class="flex items-center space-x-2">
+                                            <code class="text-sm bg-muted px-2 py-1 rounded flex-1">/api/search?query=vrede</code>
+                                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3" onclick="copyToClipboard('/api/search?query=vrede')">
+                                                <i data-lucide="copy" class="h-4 w-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="p-4">
+                                        <code class="text-sm bg-muted px-2 py-1 rounded">/api/daytext</code>
+                                    </td>
+                                    <td class="p-4 text-muted-foreground">Dagtekst (optioneel: ?seed=...)</td>
+                                    <td class="p-4">
+                                        <div class="flex items-center space-x-2">
+                                            <code class="text-sm bg-muted px-2 py-1 rounded flex-1">/api/daytext</code>
+                                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3" onclick="copyToClipboard('/api/daytext')">
+                                                <i data-lucide="copy" class="h-4 w-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="p-4">
+                                        <code class="text-sm bg-muted px-2 py-1 rounded">/api/versions</code>
+                                    </td>
+                                    <td class="p-4 text-muted-foreground">Beschikbare vertalingen</td>
+                                    <td class="p-4">
+                                        <div class="flex items-center space-x-2">
+                                            <code class="text-sm bg-muted px-2 py-1 rounded flex-1">/api/versions</code>
+                                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3" onclick="copyToClipboard('/api/versions')">
+                                                <i data-lucide="copy" class="h-4 w-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="p-4">
+                                        <code class="text-sm bg-muted px-2 py-1 rounded">/api/chapter</code>
+                                    </td>
+                                    <td class="p-4 text-muted-foreground">Alle verzen van een hoofdstuk</td>
+                                    <td class="p-4">
+                                        <div class="flex items-center space-x-2">
+                                            <code class="text-sm bg-muted px-2 py-1 rounded flex-1">/api/chapter?book=Genesis&chapter=1</code>
+                                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3" onclick="copyToClipboard('/api/chapter?book=Genesis&chapter=1')">
+                                                <i data-lucide="copy" class="h-4 w-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-muted/30">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">Over de API</h2>
+                <p class="text-xl text-muted-foreground mb-8 leading-relaxed">
+                    Een open en gratis te gebruiken API gebaseerd op de Statenvertaling. 
+                    Voor persoonlijk gebruik, studie of projecten.
+                </p>
+                <div class="flex justify-center items-center space-x-4">
+                    <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground flex items-center space-x-1">
+                        <i data-lucide="shield" class="w-4 h-4"></i>
+                        <span>Gratis</span>
+                    </div>
+                    <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground flex items-center space-x-1">
+                        <i data-lucide="globe" class="w-4 h-4"></i>
+                        <span>Open Source</span>
+                    </div>
+                    <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground flex items-center space-x-1">
+                        <i data-lucide="book" class="w-4 h-4"></i>
+                        <span>Statenvertaling</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-2xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-8">Contact</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-12">
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                        <div class="p-6 text-center">
+                            <i data-lucide="mail" class="h-8 w-8 mx-auto mb-4 text-primary"></i>
+                            <h3 class="font-semibold mb-2">Email</h3>
+                            <a href="mailto:devlamper06@gmail.com" class="text-primary hover:underline">
+                                devlamper06@gmail.com
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                        <div class="p-6 text-center">
+                            <i data-lucide="github" class="h-8 w-8 mx-auto mb-4 text-primary"></i>
+                            <h3 class="font-semibold mb-2">GitHub</h3>
+                            <a href="https://github.com/AlexLamper/bijbel-api" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                                AlexLamper/bijbel-api
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center text-muted-foreground">
+                    <h3 class="font-semibold mb-4">Bronnen</h3>
+                    <div class="flex justify-center space-x-6 text-sm">
+                        <span>Statenvertaling (GBV)</span>
+                        <span>•</span>
+                        <span>Render Hosting</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="border-t bg-background py-8">
+        <div class="container mx-auto px-4 text-center text-muted-foreground">
+            <p>&copy; 2025 Bijbel API – Alle rechten voorbehouden.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                // You could add a toast notification here
+                console.log('Copied to clipboard: ' + text);
+            });
+        }
+
+        // Removed the conflicting API interaction functions from here.
+        // They are now solely handled by script.js
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+    <script src="/site/script.js"></script>
+</body>
 </html>
