@@ -1,64 +1,70 @@
-# Bijbel-API (Statenvertaling)
+# 📖 Bijbel API
 
-Dit project biedt een eenvoudige, uitbreidbare API voor de Statenvertaling van de Bijbel, gebouwd met FastAPI.
+<p>
+  <img src="https://img.shields.io/badge/Version-v1.0-blue?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/github/license/AlexLamper/bijbel-api?style=for-the-badge" alt="License" />
+  <img src="https://img.shields.io/github/issues/AlexLamper/bijbel-api?style=for-the-badge" alt="Issues" />
+</p>
 
-## Functies
-- Geef een willekeurig vers
-- Haal specifieke verzen of passages op
-- Zoek op tekst in de Bijbel
-- Overzicht van boeken, hoofdstukken en verzen
-- Genereer een vaste dagtekst
-- Ondersteuning voor meerdere vertalingen (uitbreidbaar)
+**Een REST API voor het opvragen van bijbelteksten uit Nederlandse bijbelvertalingen.**  
+Ontwikkeld voor developers, theologen, studenten en hobbyprojecten die Bijbelse teksten digitaal willen gebruiken.
 
-## Projectstructuur
-```
-.
-├── main.py                       ← FastAPI app met API-endpoints
-├── data/
-│   ├── statenvertaling.txt       ← Ruwe originele tekstbestand (zelf toevoegen)
-│   └── statenvertaling.json      ← Geparste JSON-versie van de bijbeltekst
-├── utils/
-│   └── bible_parser.py           ← (optioneel) parsing-helpers
-├── convert_to_json.py            ← Script dat .txt omzet naar .json
-├── requirements.txt              ← Python dependencies
-└── README.md                     ← Documentatie en uitleg
-```
+---
 
-## Installatie & Gebruik
-1. **Plaats je `statenvertaling.txt` in de map `data/`.**
-2. Installeer de vereisten:
-   ```
-   pip install -r requirements.txt
-   ```
-3. Genereer de JSON-database:
-   ```
-   python convert_to_json.py
-   ```
-4. Start de API:
-   ```
-   uvicorn main:app --reload
-   ```
+## ✨ Features
 
-## Endpoints
-| Endpoint | Beschrijving |
-|----------|-------------|
-| `/` | Welkomstbericht en verwijzing naar de documentatie |
-| `/random` | Één willekeurig vers uit de hele Statenvertaling |
-| `/verse?book=...&chapter=...&verse=...` | Haal een specifiek vers op |
-| `/passage?book=...&chapter=...&start=...&end=...` | Meerdere verzen uit één hoofdstuk |
-| `/books` | Lijst van alle boeken |
-| `/chapters?book=...` | Lijst van hoofdstukken voor een boek |
-| `/verses?book=...&chapter=...` | Lijst met versnummers in een hoofdstuk |
-| `/search?query=...` | Zoek op een woord of zin in alle teksten |
-| `/daytext` | Genereert een vaste dagtekst (optioneel: `?seed=...`) |
-| `/versions` | Lijst met beschikbare vertalingen (nu: Statenvertaling) |
+- 🔀 **Willekeurige verzen** opvragen  
+- 🔍 **Zoeken op tekst** in de gehele Bijbel  
+- 📚 **Structuur-overzicht** van boeken, hoofdstukken en verzen  
+- 📖 **Specifieke verzen of passages** ophalen  
+- 📅 **Dagteksten** genereren (optioneel met seed)  
 
-Alle endpoints zijn gedocumenteerd en direct te testen via `/docs` (Swagger UI) of `/redoc`.
+---
 
-## Uitbreiden
-- Voeg extra vertalingen toe door nieuwe .txt/.json bestanden te maken en het datamodel uit te breiden
-- Voeg parsing- of zoekhulpmethodes toe in `utils/bible_parser.py`
-- Voeg extra endpoints of functionaliteit toe in `main.py`
+## 🌐 API Endpoints
 
-## Licentie
-MIT 
+| Methode | Endpoint | Beschrijving |
+|--------|----------|--------------|
+| GET | `/` | Homepagina met informatie over de API + link naar docs |
+| GET | `/random` | Willekeurig vers |
+| GET | `/verse?book=...&chapter=...&verse=...` | Specifiek vers |
+| GET | `/passage?book=...&chapter=...&start=...&end=...` | Meerdere verzen |
+| GET | `/books` | Alle boeken |
+| GET | `/chapters?book=...` | Hoofdstukken in boek |
+| GET | `/verses?book=...&chapter=...` | Versnummers in hoofdstuk |
+| GET | `/search?query=...` | Zoek in bijbeltekst |
+| GET | `/daytext?seed=...` | Dagtekst, optioneel seed |
+| GET | `/versions` | Beschikbare vertalingen |
+
+👉 Alle routes zijn gedocumenteerd via:
+- `/docs` – Swagger UI
+- `/redoc` – ReDoc UI
+
+---
+
+## 🧩 Uitbreiden
+
+Ik ben van plan deze API nog uit te breiden, bijvoorbeeld door:
+- Meer Nederlandstalige bijbelvertalingen toe te voegen.
+- Meer vertalingen toe te voegen (bijv. ook een Engelse vertaling).
+- Extra API endpoints toe te voegen die handig kunnen zijn.
+
+---
+
+## 📜 License
+
+Deze API valt onder de [MIT License](LICENSE).
+
+---
+
+## 📎 Contact
+
+- GitHub: [@AlexLamper](https://github.com/AlexLamper)
+- Mail: `devlamper06@gmail.com`
+- Website: [https://bijbel-api.nl](https://bijbel-api.nl)
+
+---
+
+## 📌 Versie
+
+**Current Version**: `v1.0`
