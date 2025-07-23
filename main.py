@@ -21,12 +21,43 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
-app = FastAPI()
+import logging
+
+# Configure logging for analytics
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
+
+app = FastAPI(
+    title="Bijbel API",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
 
 # SlowAPI limiter setup
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Custom error handler for better error messages
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request, exc):
+    logging.warning(f"HTTPException: {exc.status_code} {exc.detail} - {request.url}")
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"error": exc.status_code, "message": exc.detail},
+    )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    logging.warning(f"ValidationError: {exc.errors()} - {request.url}")
+    return JSONResponse(
+        status_code=422,
+        content={"error": 422, "message": "Validation error", "details": exc.errors()},
+    )
 
 # Load environment variables from .env file
 load_dotenv()
@@ -43,6 +74,15 @@ app.add_middleware(
 
 # Serve static files from /site
 app.mount("/site", StaticFiles(directory="site"), name="site")
+
+# Simple analytics middleware (log endpoint and IP)
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    ip = request.client.host
+    path = request.url.path
+    logging.info(f"Request: {ip} {path}")
+    response = await call_next(request)
+    return response
 
 # Load and structure the data
 def load_data():
@@ -86,7 +126,7 @@ def serve_index():
     raise HTTPException(status_code=404, detail="index.html niet gevonden")
 
 @app.get("/api/random")
-@limiter.limit("20/minute")  # random mag wat vaker
+@limiter.limit("20/minute")
 def get_random_verse(request: Request):
     book = random.choice(list(data.keys()))
     chapter = random.choice(list(data[book].keys()))
