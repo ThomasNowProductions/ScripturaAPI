@@ -316,63 +316,83 @@
         </div>
     </section>
 
-    <section id="demo" class="container mx-auto px-4 py-16">
-        <h2 class="text-3xl font-bold text-primary mb-8 text-center">Live Demo</h2>
+    <section id="demo" class="py-20 bg-muted/30">
+      <div class="container mx-auto px-4">
+          <div class="text-center mb-16">
+              <h2 class="text-3xl md:text-4xl font-bold mb-4 text-primary">Live Demo</h2>
+              <p class="text-xl text-muted-foreground">Test direct de functies van de Bijbel API</p>
+          </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="card p-6">
-                <h3 class="card-title text-2xl mb-4">Dagtekst</h3>
-                <button id="getDaytext" class="btn btn-primary w-full">Genereer Dagtekst</button>
-                <div id="daytextResult" class="mt-4 p-3 bg-muted rounded-md text-sm">
-                    De dagtekst verschijnt hier.
-                </div>
-            </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <!-- Dagtekst -->
+              <div class="card">
+                  <div class="card-header">
+                      <h3 class="card-title text-2xl">Dagtekst</h3>
+                  </div>
+                  <div class="card-content space-y-4">
+                      <button id="getDaytext" class="btn btn-primary w-full">Genereer Dagtekst</button>
+                      <div id="daytextResult" class="p-3 bg-muted rounded-md text-sm min-h-[3rem]">
+                          De dagtekst verschijnt hier.
+                      </div>
+                  </div>
+              </div>
 
-            <div class="card p-6">
-                <h3 class="card-title text-2xl mb-4">Zoek een specifiek vers</h3>
-                <form id="verseForm">
-                    <div class="mb-4">
-                        <label for="book" class="label">Boek:</label>
-                        <input type="text" id="book" class="input mt-1" placeholder="Bijv. Johannes" required>
-                    </div>
-                    <div class="mb-4 flex space-x-4">
-                        <div class="w-1/2">
-                            <label for="chapter" class="label">Hoofdstuk:</label>
-                            <input type="number" id="chapter" class="input mt-1" placeholder="Bijv. 3" required>
-                        </div>
-                        <div class="w-1/2">
-                            <label for="verse" class="label">Vers:</label>
-                            <input type="number" id="verse" class="input mt-1" placeholder="Bijv. 16" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-full">Zoek Vers</button>
-                </form>
-                <div id="verseResult" class="mt-4 p-3 bg-muted rounded-md text-sm">
-                    Het gezochte vers verschijnt hier.
-                </div>
-            </div>
+              <!-- Specifiek vers -->
+              <div class="card">
+                  <div class="card-header">
+                      <h3 class="card-title text-2xl">Zoek een specifiek vers</h3>
+                  </div>
+                  <div class="card-content">
+                      <form id="verseForm" class="space-y-4">
+                          <div>
+                              <label for="book" class="label">Boek</label>
+                              <input type="text" id="book" class="input mt-1" placeholder="Bijv. Johannes" required>
+                          </div>
+                          <div class="flex space-x-4">
+                              <div class="w-1/2">
+                                  <label for="chapter" class="label">Hoofdstuk</label>
+                                  <input type="number" id="chapter" class="input mt-1" placeholder="Bijv. 3" required>
+                              </div>
+                              <div class="w-1/2">
+                                  <label for="verse" class="label">Vers</label>
+                                  <input type="number" id="verse" class="input mt-1" placeholder="Bijv. 16" required>
+                              </div>
+                          </div>
+                          <button type="submit" class="btn btn-primary w-full">Zoek Vers</button>
+                      </form>
+                      <div id="verseResult" class="mt-4 p-3 bg-muted rounded-md text-sm min-h-[3rem]">
+                          Het gezochte vers verschijnt hier.
+                      </div>
+                  </div>
+              </div>
 
-            <div class="card p-6">
-                <h3 class="card-title text-2xl mb-4">Bekijk een heel hoofdstuk</h3>
-                <form id="chapterForm">
-                    <div class="mb-4">
-                        <label for="bookChapterSelect" class="label">Boek:</label>
-                        <select id="bookChapterSelect" class="input mt-1" required>
-                            <option value="">Selecteer een boek...</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label for="chapterNum" class="label">Hoofdstuk:</label>
-                        <input type="number" id="chapterNum" class="input mt-1" placeholder="Bijv. 1" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-full">Toon Hoofdstuk</button>
-                </form>
-                <div id="chapterResult" class="mt-4 p-3 bg-muted rounded-md text-sm max-h-60 overflow-y-auto">
-                    Het hoofdstuk verschijnt hier.
-                </div>
-            </div>
-        </div>
-    </section>
+              <!-- Heel hoofdstuk -->
+              <div class="card">
+                  <div class="card-header">
+                      <h3 class="card-title text-2xl">Bekijk een heel hoofdstuk</h3>
+                  </div>
+                  <div class="card-content">
+                      <form id="chapterForm" class="space-y-4">
+                          <div>
+                              <label for="bookChapterSelect" class="label">Boek</label>
+                              <select id="bookChapterSelect" class="input mt-1" required>
+                                  <option value="">Selecteer een boek...</option>
+                              </select>
+                          </div>
+                          <div>
+                              <label for="chapterNum" class="label">Hoofdstuk</label>
+                              <input type="number" id="chapterNum" class="input mt-1" placeholder="Bijv. 1" required>
+                          </div>
+                          <button type="submit" class="btn btn-primary w-full">Toon Hoofdstuk</button>
+                      </form>
+                      <div id="chapterResult" class="mt-4 p-3 bg-muted rounded-md text-sm max-h-60 overflow-y-auto">
+                          Het hoofdstuk verschijnt hier.
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
 
     <section id="api-routes" class="py-20">
         <div class="container mx-auto px-4">
