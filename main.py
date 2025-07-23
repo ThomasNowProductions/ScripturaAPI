@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -15,9 +15,18 @@ from models import APIKey, Base
 from dotenv import load_dotenv
 import stripe
 import uuid
-from fastapi import Request
+
+# SlowAPI imports voor rate limiting
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 app = FastAPI()
+
+# SlowAPI limiter setup
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -77,7 +86,8 @@ def serve_index():
     raise HTTPException(status_code=404, detail="index.html niet gevonden")
 
 @app.get("/api/random")
-def get_random_verse():
+@limiter.limit("20/minute")  # random mag wat vaker
+def get_random_verse(request: Request):
     book = random.choice(list(data.keys()))
     chapter = random.choice(list(data[book].keys()))
     verse = random.choice(list(data[book][chapter].keys()))
@@ -89,7 +99,8 @@ def get_random_verse():
     }
 
 @app.get("/api/verse")
-def get_verse(book: str, chapter: str, verse: str):
+@limiter.limit("30/minute")
+def get_verse(book: str, chapter: str, verse: str, request: Request):
     book_key = normalize_book_name(book)
     if not book_key:
         raise HTTPException(status_code=404, detail="Boek niet gevonden")
@@ -105,7 +116,8 @@ def get_verse(book: str, chapter: str, verse: str):
         raise HTTPException(status_code=404, detail="Vers niet gevonden")
 
 @app.get("/api/passage")
-def get_passage(book: str, chapter: str, start: int, end: int):
+@limiter.limit("10/minute")
+def get_passage(book: str, chapter: str, start: int, end: int, request: Request):
     book_key = normalize_book_name(book)
     if not book_key:
         raise HTTPException(status_code=404, detail="Boek niet gevonden")
@@ -122,18 +134,21 @@ def get_passage(book: str, chapter: str, start: int, end: int):
         raise HTTPException(status_code=404, detail="Passage niet gevonden")
 
 @app.get("/api/books")
-def get_books():
+@limiter.limit("30/minute")
+def get_books(request: Request):
     return list(data.keys())
 
 @app.get("/api/chapters")
-def get_chapters(book: str):
+@limiter.limit("30/minute")
+def get_chapters(book: str, request: Request):
     book_key = normalize_book_name(book)
     if not book_key:
         raise HTTPException(status_code=404, detail="Boek niet gevonden")
     return list(data[book_key].keys())
 
 @app.get("/api/verses")
-def get_verses(book: str, chapter: str):
+@limiter.limit("30/minute")
+def get_verses(book: str, chapter: str, request: Request):
     book_key = normalize_book_name(book)
     if not book_key:
         raise HTTPException(status_code=404, detail="Boek niet gevonden")
@@ -143,7 +158,8 @@ def get_verses(book: str, chapter: str):
         raise HTTPException(status_code=404, detail="Hoofdstuk niet gevonden")
 
 @app.get("/api/search")
-def search_verses(query: str = Query(..., min_length=1)):
+@limiter.limit("10/minute")
+def search_verses(request: Request, query: str = Query(..., min_length=1)):
     results = []
     for book, chapters in data.items():
         for chapter, verses in chapters.items():
@@ -158,7 +174,8 @@ def search_verses(query: str = Query(..., min_length=1)):
     return results
 
 @app.get("/api/daytext")
-def get_daytext(seed: str = None):
+@limiter.limit("5/minute")
+def get_daytext(request: Request, seed: str = None):
     books = list(data.keys())
     # Use today's date or a seed to get a reproducible random
     base = seed if seed else date.today().isoformat()
@@ -175,11 +192,13 @@ def get_daytext(seed: str = None):
     }
 
 @app.get("/api/versions")
-def get_versions():
+@limiter.limit("10/minute")
+def get_versions(request: Request):
     return available_versions
 
 @app.get("/api/chapter")
-def get_chapter(book: str, chapter: str):
+@limiter.limit("20/minute")
+def get_chapter(book: str, chapter: str, request: Request):
     book_key = normalize_book_name(book)
     if not book_key:
         raise HTTPException(status_code=404, detail="Boek niet gevonden")
@@ -212,11 +231,13 @@ def verify_api_key(key: str = Security(api_key_header)):
         raise HTTPException(status_code=403, detail="Invalid or expired key")
 
 @app.get("/secure-data")
-def secure_data(_: str = Depends(verify_api_key)):
+@limiter.limit("10/minute")
+def secure_data(request: Request, _: str = Depends(verify_api_key)):
     return {"message": "Je bent geauthenticeerd!"}
 # --- einde authenticatie ---
 
 @app.post("/stripe/webhook")
+@limiter.limit("5/minute")
 async def stripe_webhook(request: Request):
     payload = await request.body()
     sig_header = request.headers.get("stripe-signature")
