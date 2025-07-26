@@ -399,10 +399,19 @@
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold mb-4">API Endpoints</h2>
-                <p class="text-xl text-muted-foreground mb-8">
+                <p class="text-xl text-muted-foreground mb-4">
                     Hieronder vind je een overzicht van alle API endpoints. Klik op een voorbeeld-URL om deze te openen, 
                     of kopieer de URL met één klik.
                 </p>
+                <div class="mb-4">
+                    <span class="inline-block bg-brand-100 text-brand-700 rounded px-3 py-1 text-sm font-medium mb-2">Meerdere vertalingen beschikbaar!</span>
+                    <p class="text-base text-muted-foreground">
+                        <b>Standaard</b> wordt de <b>Statenvertaling</b> gebruikt.<br>
+                        Wil je een andere bijbelvertaling? Voeg dan de <code class="bg-muted px-1 rounded">version</code> parameter toe aan je request.<br>
+                        Bijvoorbeeld: <code class="bg-muted px-1 rounded">/api/verse?book=Genesis&amp;chapter=1&amp;verse=1&amp;version=kjv</code> voor de King James Version.<br>
+                        Bekijk alle beschikbare vertalingen via <code class="bg-muted px-1 rounded">/api/versions</code>.
+                    </p>
+                </div>
                 <a href="#" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 inline-flex items-center">
                     <i data-lucide="external-link" class="mr-2 h-4 w-4"></i>
                     Bekijk de API-documentatie (Swagger UI)
