@@ -46,8 +46,8 @@ Ontwikkeld voor developers, theologen, studenten en hobbyprojecten die Bijbelse 
 
 Ik ben van plan deze API nog uit te breiden, bijvoorbeeld door:
 - Meer Nederlandstalige bijbelvertalingen toe te voegen.
-- Meer vertalingen toe te voegen (bijv. ook een Engelse vertaling).
 - Extra API endpoints toe te voegen die handig kunnen zijn.
+- Betere documentatie schrijven.
 
 ---
 
