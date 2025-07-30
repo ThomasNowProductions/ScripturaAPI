@@ -1,4 +1,4 @@
-# 📖 Bijbel API
+# 📖 Scriptura API
 
 <p>
   <img src="https://img.shields.io/badge/Version-v1.0-blue?style=for-the-badge" alt="Version" />
@@ -6,54 +6,54 @@
   <img src="https://img.shields.io/github/issues/AlexLamper/bijbel-api?style=for-the-badge" alt="Issues" />
 </p>
 
-**Een REST API voor het opvragen van bijbelteksten uit Nederlandse bijbelvertalingen.**  
-Ontwikkeld voor developers, theologen, studenten en hobbyprojecten die Bijbelse teksten digitaal willen gebruiken.
+**A REST API for retrieving Bible texts from multiple Bible translations.**  
+Supports various languages including Dutch, English, Afrikaans, and more. Developed for developers, theologians, students, and hobby projects who want to use Biblical texts digitally.
 
 ---
 
 ## ✨ Features
 
-- 🔀 **Willekeurige verzen** opvragen  
-- 🔍 **Zoeken op tekst** in de gehele Bijbel  
-- 📚 **Structuur-overzicht** van boeken, hoofdstukken en verzen  
-- 📖 **Specifieke verzen of passages** ophalen  
-- 📅 **Dagteksten** genereren (optioneel met seed)  
+- 🔀 **Random verses** retrieval  
+- 🔍 **Text search** across the entire Bible  
+- 📚 **Structure overview** of books, chapters, and verses  
+- 📖 **Specific verses or passages** retrieval  
+- 📅 **Daily texts** generation (optional with seed)  
 
 ---
 
 ## 🌐 API Endpoints
 
-| Methode | Endpoint | Beschrijving |
-|--------|----------|--------------|
-| GET | `/` | Homepagina met informatie over de API + link naar docs |
-| GET | `/random` | Willekeurig vers |
-| GET | `/verse?book=...&chapter=...&verse=...` | Specifiek vers |
-| GET | `/passage?book=...&chapter=...&start=...&end=...` | Meerdere verzen |
-| GET | `/books` | Alle boeken |
-| GET | `/chapters?book=...` | Hoofdstukken in boek |
-| GET | `/verses?book=...&chapter=...` | Versnummers in hoofdstuk |
-| GET | `/search?query=...` | Zoek in bijbeltekst |
-| GET | `/daytext?seed=...` | Dagtekst, optioneel seed |
-| GET | `/versions` | Beschikbare vertalingen |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | Homepage with API information + link to docs |
+| GET | `/random` | Random verse |
+| GET | `/verse?book=...&chapter=...&verse=...` | Specific verse |
+| GET | `/passage?book=...&chapter=...&start=...&end=...` | Multiple verses |
+| GET | `/books` | All books |
+| GET | `/chapters?book=...` | Chapters in book |
+| GET | `/verses?book=...&chapter=...` | Verse numbers in chapter |
+| GET | `/search?query=...` | Search in Bible text |
+| GET | `/daytext?seed=...` | Daily text, optional seed |
+| GET | `/versions` | Available translations |
 
-👉 Alle routes zijn gedocumenteerd via:
+👉 All routes are documented via:
 - `/docs` – Swagger UI
 - `/redoc` – ReDoc UI
 
 ---
 
-## 🧩 Uitbreiden
+## 🧩 Expansion
 
-Ik ben van plan deze API nog uit te breiden, bijvoorbeeld door:
-- Meer Nederlandstalige bijbelvertalingen toe te voegen.
-- Extra API endpoints toe te voegen die handig kunnen zijn.
-- Betere documentatie schrijven.
+I plan to expand this API further, for example by:
+- Adding more Bible translations in various languages.
+- Adding additional API endpoints that can be useful.
+- Writing better documentation.
 
 ---
 
 ## 📜 License
 
-Deze API valt onder de [MIT License](LICENSE).
+This API is licensed under the [MIT License](LICENSE).
 
 ---
 
@@ -61,10 +61,10 @@ Deze API valt onder de [MIT License](LICENSE).
 
 - GitHub: [@AlexLamper](https://github.com/AlexLamper)
 - Mail: `devlamper06@gmail.com`
-- Website: [https://bijbel-api.nl](https://bijbel-api.nl)
+- Website: [https://www.scriptura-edu.com](https://www.scriptura-edu.com)
 
 ---
 
-## 📌 Versie
+## 📌 Version
 
 **Current Version**: `v1.0`
