@@ -1,7 +1,7 @@
+# main.py
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi import Security, Depends
 from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import sessionmaker
@@ -27,7 +27,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 
 app = FastAPI(
-    title="Bijbel API",
+    title="Scriptura API",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -39,7 +39,6 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Custom error handler for better error messages
-from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -73,7 +72,7 @@ app.add_middleware(
 )
 
 # Serve static files from /site
-app.mount("/site", StaticFiles(directory="site"), name="site")
+app.mount("/site", __import__("fastapi.staticfiles", fromlist=["StaticFiles"]).StaticFiles(directory="site"), name="site")
 
 # Simple analytics middleware (log endpoint and IP)
 @app.middleware("http")
@@ -84,21 +83,29 @@ async def log_requests(request: Request, call_next):
     response = await call_next(request)
     return response
 
-# --- Multi-version support ---
+# --- Multi-version support for Bible texts ---
 def load_all_versions():
     versions_dir = "data"
     versions = {}
+    if not os.path.isdir(versions_dir):
+        logging.warning(f"Versions dir '{versions_dir}' not found.")
+        return versions
     for filename in os.listdir(versions_dir):
         if filename.endswith(".json"):
             version_name = filename.replace(".json", "")
-            with open(os.path.join(versions_dir, filename), encoding="utf-8") as f:
-                raw_data = json.load(f)
+            path = os.path.join(versions_dir, filename)
+            try:
+                with open(path, encoding="utf-8") as f:
+                    raw_data = json.load(f)
+            except Exception as e:
+                logging.warning(f"Failed to load version file {path}: {e}")
+                continue
             structured_data = {}
-            for verse in raw_data["verses"]:
-                book = verse["book_name"]
-                chapter = str(verse["chapter"])
-                verse_number = str(verse["verse"])
-                text = verse["text"]
+            for verse in raw_data.get("verses", []):
+                book = verse.get("book_name")
+                chapter = str(verse.get("chapter"))
+                verse_number = str(verse.get("verse"))
+                text = verse.get("text")
                 if book not in structured_data:
                     structured_data[book] = {}
                 if chapter not in structured_data[book]:
@@ -115,7 +122,7 @@ all_versions = load_all_versions()
 def get_version_key(version: str):
     version = version.lower()
     for key, v in all_versions.items():
-        meta = v["meta"]
+        meta = v.get("meta", {})
         if (
             key.lower() == version
             or meta.get("shortname", "").lower() == version
@@ -126,13 +133,55 @@ def get_version_key(version: str):
     return None
 
 def normalize_book_name(version_key, book_name):
-    data = all_versions[version_key]["data"]
+    data = all_versions.get(version_key, {}).get("data", {})
     for name in data:
         if name.lower().replace("ë", "e") == book_name.lower().replace("ë", "e"):
             return name
     return None
 
-# Serve index.html on /
+# --- COMMENTARY LOADER (Matthew Henry, etc.) ---
+COMMENTARIES_DIR = "commentaries"
+
+def load_commentaries():
+    commentaries = {}
+    if not os.path.isdir(COMMENTARIES_DIR):
+        logging.warning(f"Commentaries dir '{COMMENTARIES_DIR}' not found.")
+        return commentaries
+    for fname in os.listdir(COMMENTARIES_DIR):
+        if fname.endswith(".json"):
+            path = os.path.join(COMMENTARIES_DIR, fname)
+            try:
+                with open(path, encoding="utf-8") as f:
+                    raw = json.load(f)
+                # identify key: meta.id or filename without ext
+                key = raw.get("meta", {}).get("id") or fname.replace(".json", "")
+                commentaries[key] = raw
+                logging.info(f"Loaded commentary '{key}' from {path}")
+            except Exception as e:
+                logging.warning(f"Failed to load commentary file {path}: {e}")
+    return commentaries
+
+all_commentaries = load_commentaries()
+
+def normalize_commentary_book(source_key: str, book_name: str):
+    """
+    Try to match book_name (like 'Genesis') to an entry in the commentary file.
+    Returns the stored book key (e.g. 'Genesis') or None.
+    """
+    src = all_commentaries.get(source_key)
+    if not src:
+        return None
+    # First try case-insensitive name match
+    for name in src.get("books", {}).keys():
+        if name.lower().replace("ë","e") == book_name.lower().replace("ë","e"):
+            return name
+    # Then try matching by id field inside each book
+    for name, info in src.get("books", {}).items():
+        if info.get("id", "").lower() == book_name.lower():
+            return name
+    return None
+
+# --- Serve index.html on /
 @app.get("/", response_class=FileResponse)
 def serve_index():
     index_path = os.path.join("site", "index.html")
@@ -140,6 +189,7 @@ def serve_index():
         return FileResponse(index_path, media_type="text/html")
     raise HTTPException(status_code=404, detail="index.html niet gevonden")
 
+# --- Existing Bible endpoints (unchanged) ---
 @app.get("/api/random")
 @limiter.limit("20/minute")
 def get_random_verse(request: Request, version: str = "statenvertaling"):
@@ -287,12 +337,12 @@ def get_versions(request: Request):
     return [
         {
             "key": k,
-            "name": v["meta"].get("name", k),
-            "shortname": v["meta"].get("shortname"),
-            "module": v["meta"].get("module"),
-            "lang": v["meta"].get("lang"),
-            "year": v["meta"].get("year"),
-            "description": v["meta"].get("description"),
+            "name": v.get("meta", {}).get("name", k),
+            "shortname": v.get("meta", {}).get("shortname"),
+            "module": v.get("meta", {}).get("module"),
+            "lang": v.get("meta", {}).get("lang"),
+            "year": v.get("meta", {}).get("year"),
+            "description": v.get("meta", {}).get("description"),
         }
         for k, v in all_versions.items()
     ]
@@ -317,8 +367,37 @@ def get_chapter(book: str, chapter: str, request: Request, version: str = "state
     except KeyError:
         raise HTTPException(status_code=404, detail="Hoofdstuk niet gevonden")
 
-# --- API-key authenticatie ---
+# --- COMMENTARY ENDPOINT ---
+@app.get("/api/commentary")
+@limiter.limit("20/minute")
+def get_commentary(request: Request, source: str, book: str, chapter: str, verse: str = None):
+    """
+    Returns commentary for a chapter or specific verse.
 
+    Example:
+    /api/commentary?source=matthew-henry&book=Genesis&chapter=5
+    -> { "1": "...", "2": "...", ... }
+
+    /api/commentary?source=matthew-henry&book=Genesis&chapter=5&verse=3
+    -> { "3": "..." }
+    """
+    src = all_commentaries.get(source)
+    if not src:
+        raise HTTPException(status_code=404, detail="Commentary source not found")
+    book_key = normalize_commentary_book(source, book)
+    if not book_key:
+        raise HTTPException(status_code=404, detail="Book not found in commentary")
+    chapters = src.get("books", {}).get(book_key, {}).get("chapters", {})
+    if chapter not in chapters:
+        raise HTTPException(status_code=404, detail="Chapter not found in commentary")
+    verses = chapters[chapter]  # dict of verse -> text
+    if verse:
+        if verse not in verses:
+            raise HTTPException(status_code=404, detail="Verse not found in commentary")
+        return {verse: verses[verse]}
+    return verses
+
+# --- API-key authenticatie ---
 # Database setup (SQLite)
 engine = create_engine("sqlite:///./test.db")
 SessionLocal = sessionmaker(bind=engine)

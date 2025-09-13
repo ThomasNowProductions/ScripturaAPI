@@ -5,3 +5,5 @@ slowapi
 sqlalchemy
 stripe
 pydantic
+requests
+tqdm

@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/github/issues/AlexLamper/bijbel-api?style=for-the-badge" alt="Issues" />
 </p>
 
-**A REST API for retrieving Bible texts from multiple Bible translations.**  
+**A REST API for retrieving Bible texts and commentaries across multiple translations.**  
 Supports various languages including Dutch, English, Afrikaans, and more. Developed for developers, theologians, students, and hobby projects who want to use Biblical texts digitally.
 
 ---
@@ -19,6 +19,7 @@ Supports various languages including Dutch, English, Afrikaans, and more. Develo
 - 📖 **Specific verses or passages** retrieval  
 - 📅 **Daily texts** generation (optional with seed)
 - 🧠 **Smart reference parsing** for complex Bible references  
+- 📝 **Commentaries** on chapters and verses (e.g. *Matthew Henry*)  
 
 ---
 
@@ -37,6 +38,8 @@ Supports various languages including Dutch, English, Afrikaans, and more. Develo
 | GET | `/api/daytext?seed=...` | Daily text, optional seed |
 | GET | `/api/versions` | Available translations |
 | GET | `/api/chapter?book=...&chapter=...` | Entire chapter |
+| GET | `/api/commentary?source=...&book=...&chapter=...` | Get commentary for an entire chapter (e.g. `matthew-henry`) |
+| GET | `/api/commentary?source=...&book=...&chapter=...&verse=...` | Get commentary for a specific verse (e.g. `matthew-henry`) |
 | **POST** | **`/api/parse/reference`** | **Parse complex Bible reference** |
 | **GET** | **`/api/parse/reference/{ref}`** | **Parse reference via URL** |
 | **POST** | **`/api/parse/references`** | **Parse multiple references** |
@@ -117,7 +120,8 @@ This API is licensed under the [MIT License](LICENSE).
 
 - GitHub: [@AlexLamper](https://github.com/AlexLamper)
 - Mail: `devlamper06@gmail.com`
-- Website: [https://www.scriptura-edu.com](https://www.scriptura-edu.com)
+- Scriptura API: [https://www.scriptura-api.com](https://www.scriptura-api.com)
+- Scriptura: [https://www.scriptura-edu.com](https://www.scriptura-edu.com)
 
 ---
 

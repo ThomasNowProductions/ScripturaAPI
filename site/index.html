@@ -270,7 +270,7 @@
                         View documentation
                         <i data-lucide="arrow-right" class="ml-2 w-5 h-5"></i>
                     </a>
-                    <a href="#daily-text" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-white hover:bg-white hover:border-gray-300 px-8 h-11 rounded-md shadow-md">
+                    <a href="/api/daytext" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-white hover:bg-white hover:border-gray-300 px-8 h-11 rounded-md shadow-md">
                         <i data-lucide="calendar" class="mr-2 h-5 w-5"></i>
                         Try daily text
                     </a>
@@ -612,6 +612,20 @@
                                         </div>
                                     </td>
                                 </tr>
+                                <tr class="border-t border-gray-200">
+                                    <td class="p-4">
+                                        <code class="text-sm bg-gray-100 px-2 py-1 rounded text-gray-900">/api/commentary</code>
+                                    </td>
+                                    <td class="p-4 text-gray-600">Commentary for a verse or passage</td>
+                                    <td class="p-4">
+                                        <div class="flex items-center space-x-2">
+                                            <code class="text-sm bg-gray-100 px-2 py-1 rounded flex-1 text-gray-900">/api/commentary?book=John&chapter=3&verse=16</code>
+                                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-gray-100 hover:text-gray-900 h-9 rounded-md px-3" onclick="copyToClipboard('/api/commentary?book=John&chapter=3&verse=16')">
+                                                <i data-lucide="copy" class="h-4 w-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -687,7 +701,7 @@
 
     <footer class="border-t border-gray-200 bg-white py-8">
         <div class="container mx-auto px-6 lg:px-8 text-center text-gray-600">
-            <p>&copy; 2025 Scriptura API – All rights reserved.</p>
+            <p>&copy; 2025 Scriptura API - All rights reserved.</p>
         </div>
     </footer>
 

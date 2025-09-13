@@ -17,4 +17,10 @@ Thumbs.db
 
 # Project specifieke
 .todo.txt
-todo.txt 
+todo.txt
+
+# Virtual environment
+venv/
+
+# Scripts
+scripts/
