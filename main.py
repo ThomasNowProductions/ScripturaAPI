@@ -27,7 +27,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 
 app = FastAPI(
-    title="Scriptura API",
+    title="BijbelQuiz Scriptura",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -84,102 +84,38 @@ async def log_requests(request: Request, call_next):
     return response
 
 # --- Multi-version support for Bible texts ---
-def load_all_versions():
-    versions_dir = "data"
-    versions = {}
-    if not os.path.isdir(versions_dir):
-        logging.warning(f"Versions dir '{versions_dir}' not found.")
-        return versions
-    for filename in os.listdir(versions_dir):
-        if filename.endswith(".json"):
-            version_name = filename.replace(".json", "")
-            path = os.path.join(versions_dir, filename)
-            try:
-                with open(path, encoding="utf-8") as f:
-                    raw_data = json.load(f)
-            except Exception as e:
-                logging.warning(f"Failed to load version file {path}: {e}")
-                continue
-            structured_data = {}
-            for verse in raw_data.get("verses", []):
-                book = verse.get("book_name")
-                chapter = str(verse.get("chapter"))
-                verse_number = str(verse.get("verse"))
-                text = verse.get("text")
-                if book not in structured_data:
-                    structured_data[book] = {}
-                if chapter not in structured_data[book]:
-                    structured_data[book][chapter] = {}
-                structured_data[book][chapter][verse_number] = text
-            versions[version_name] = {
-                "meta": raw_data.get("metadata", {}),
-                "data": structured_data
-            }
-    return versions
 
-all_versions = load_all_versions()
+# --- Statenvertaling only ---
+# Note: App branded as BijbelQuiz Scriptura (Developed by BijbelQuiz)
+def load_statenvertaling():
+    path = os.path.join("data", "statenvertaling.json")
+    if not os.path.exists(path):
+        logging.warning(f"Statenvertaling file '{path}' not found.")
+        return {"meta": {}, "data": {}}
+    with open(path, encoding="utf-8") as f:
+        raw_data = json.load(f)
+    structured_data = {}
+    for verse in raw_data.get("verses", []):
+        book = verse.get("book_name")
+        chapter = str(verse.get("chapter"))
+        verse_number = str(verse.get("verse"))
+        text = verse.get("text")
+        if book not in structured_data:
+            structured_data[book] = {}
+        if chapter not in structured_data[book]:
+            structured_data[book][chapter] = {}
+        structured_data[book][chapter][verse_number] = text
+    return {"meta": raw_data.get("metadata", {}), "data": structured_data}
 
-def get_version_key(version: str):
-    version = version.lower()
-    for key, v in all_versions.items():
-        meta = v.get("meta", {})
-        if (
-            key.lower() == version
-            or meta.get("shortname", "").lower() == version
-            or meta.get("module", "").lower() == version
-            or meta.get("name", "").lower() == version
-        ):
-            return key
-    return None
+statenvertaling = load_statenvertaling()
 
-def normalize_book_name(version_key, book_name):
-    data = all_versions.get(version_key, {}).get("data", {})
+def normalize_book_name(book_name):
+    data = statenvertaling["data"]
     for name in data:
         if name.lower().replace("ë", "e") == book_name.lower().replace("ë", "e"):
             return name
     return None
 
-# --- COMMENTARY LOADER (Matthew Henry, etc.) ---
-COMMENTARIES_DIR = "commentaries"
-
-def load_commentaries():
-    commentaries = {}
-    if not os.path.isdir(COMMENTARIES_DIR):
-        logging.warning(f"Commentaries dir '{COMMENTARIES_DIR}' not found.")
-        return commentaries
-    for fname in os.listdir(COMMENTARIES_DIR):
-        if fname.endswith(".json"):
-            path = os.path.join(COMMENTARIES_DIR, fname)
-            try:
-                with open(path, encoding="utf-8") as f:
-                    raw = json.load(f)
-                # identify key: meta.id or filename without ext
-                key = raw.get("meta", {}).get("id") or fname.replace(".json", "")
-                commentaries[key] = raw
-                logging.info(f"Loaded commentary '{key}' from {path}")
-            except Exception as e:
-                logging.warning(f"Failed to load commentary file {path}: {e}")
-    return commentaries
-
-all_commentaries = load_commentaries()
-
-def normalize_commentary_book(source_key: str, book_name: str):
-    """
-    Try to match book_name (like 'Genesis') to an entry in the commentary file.
-    Returns the stored book key (e.g. 'Genesis') or None.
-    """
-    src = all_commentaries.get(source_key)
-    if not src:
-        return None
-    # First try case-insensitive name match
-    for name in src.get("books", {}).keys():
-        if name.lower().replace("ë","e") == book_name.lower().replace("ë","e"):
-            return name
-    # Then try matching by id field inside each book
-    for name, info in src.get("books", {}).items():
-        if info.get("id", "").lower() == book_name.lower():
-            return name
-    return None
 
 # --- Serve index.html on /
 @app.get("/", response_class=FileResponse)
@@ -192,16 +128,13 @@ def serve_index():
 # --- Existing Bible endpoints (unchanged) ---
 @app.get("/api/random")
 @limiter.limit("20/minute")
-def get_random_verse(request: Request, version: str = "statenvertaling"):
-    version_key = get_version_key(version)
-    if not version_key:
-        raise HTTPException(status_code=404, detail="Vertaling niet gevonden")
-    data = all_versions[version_key]["data"]
+def get_random_verse(request: Request):
+    data = statenvertaling["data"]
     book = random.choice(list(data.keys()))
     chapter = random.choice(list(data[book].keys()))
     verse = random.choice(list(data[book][chapter].keys()))
     return {
-        "version": version_key,
+        "version": "statenvertaling",
         "book": book,
         "chapter": chapter,
         "verse": verse,
@@ -210,18 +143,15 @@ def get_random_verse(request: Request, version: str = "statenvertaling"):
 
 @app.get("/api/verse")
 @limiter.limit("30/minute")
-def get_verse(book: str, chapter: str, verse: str, request: Request, version: str = "statenvertaling"):
-    version_key = get_version_key(version)
-    if not version_key:
-        raise HTTPException(status_code=404, detail="Vertaling niet gevonden")
-    data = all_versions[version_key]["data"]
-    book_key = normalize_book_name(version_key, book)
+def get_verse(book: str, chapter: str, verse: str, request: Request):
+    data = statenvertaling["data"]
+    book_key = normalize_book_name(book)
     if not book_key:
         raise HTTPException(status_code=404, detail="Boek niet gevonden")
     try:
         text = data[book_key][chapter][verse]
         return {
-            "version": version_key,
+            "version": "statenvertaling",
             "book": book_key,
             "chapter": chapter,
             "verse": verse,
@@ -232,12 +162,9 @@ def get_verse(book: str, chapter: str, verse: str, request: Request, version: st
 
 @app.get("/api/passage")
 @limiter.limit("10/minute")
-def get_passage(book: str, chapter: str, start: int, end: int, request: Request, version: str = "statenvertaling"):
-    version_key = get_version_key(version)
-    if not version_key:
-        raise HTTPException(status_code=404, detail="Vertaling niet gevonden")
-    data = all_versions[version_key]["data"]
-    book_key = normalize_book_name(version_key, book)
+def get_passage(book: str, chapter: str, start: int, end: int, request: Request):
+    data = statenvertaling["data"]
+    book_key = normalize_book_name(book)
     if not book_key:
         raise HTTPException(status_code=404, detail="Boek niet gevonden")
     try:
@@ -245,7 +172,7 @@ def get_passage(book: str, chapter: str, start: int, end: int, request: Request,
         for i in range(start, end + 1):
             verses.append({"verse": str(i), "text": data[book_key][str(chapter)][str(i)]})
         return {
-            "version": version_key,
+            "version": "statenvertaling",
             "book": book_key,
             "chapter": chapter,
             "verses": verses,
@@ -255,32 +182,23 @@ def get_passage(book: str, chapter: str, start: int, end: int, request: Request,
 
 @app.get("/api/books")
 @limiter.limit("30/minute")
-def get_books(request: Request, version: str = "statenvertaling"):
-    version_key = get_version_key(version)
-    if not version_key:
-        raise HTTPException(status_code=404, detail="Vertaling niet gevonden")
-    return list(all_versions[version_key]["data"].keys())
+def get_books(request: Request):
+    return list(statenvertaling["data"].keys())
 
 @app.get("/api/chapters")
 @limiter.limit("30/minute")
-def get_chapters(book: str, request: Request, version: str = "statenvertaling"):
-    version_key = get_version_key(version)
-    if not version_key:
-        raise HTTPException(status_code=404, detail="Vertaling niet gevonden")
-    data = all_versions[version_key]["data"]
-    book_key = normalize_book_name(version_key, book)
+def get_chapters(book: str, request: Request):
+    data = statenvertaling["data"]
+    book_key = normalize_book_name(book)
     if not book_key:
         raise HTTPException(status_code=404, detail="Boek niet gevonden")
     return list(data[book_key].keys())
 
 @app.get("/api/verses")
 @limiter.limit("30/minute")
-def get_verses(book: str, chapter: str, request: Request, version: str = "statenvertaling"):
-    version_key = get_version_key(version)
-    if not version_key:
-        raise HTTPException(status_code=404, detail="Vertaling niet gevonden")
-    data = all_versions[version_key]["data"]
-    book_key = normalize_book_name(version_key, book)
+def get_verses(book: str, chapter: str, request: Request):
+    data = statenvertaling["data"]
+    book_key = normalize_book_name(book)
     if not book_key:
         raise HTTPException(status_code=404, detail="Boek niet gevonden")
     try:
@@ -290,11 +208,8 @@ def get_verses(book: str, chapter: str, request: Request, version: str = "staten
 
 @app.get("/api/search")
 @limiter.limit("10/minute")
-def search_verses(request: Request, query: str = Query(..., min_length=1), version: str = "statenvertaling"):
-    version_key = get_version_key(version)
-    if not version_key:
-        raise HTTPException(status_code=404, detail="Vertaling niet gevonden")
-    data = all_versions[version_key]["data"]
+def search_verses(request: Request, query: str = Query(..., min_length=1)):
+    data = statenvertaling["data"]
     results = []
     for book, chapters in data.items():
         for chapter, verses in chapters.items():
@@ -310,11 +225,8 @@ def search_verses(request: Request, query: str = Query(..., min_length=1), versi
 
 @app.get("/api/daytext")
 @limiter.limit("5/minute")
-def get_daytext(request: Request, seed: str = None, version: str = "statenvertaling"):
-    version_key = get_version_key(version)
-    if not version_key:
-        raise HTTPException(status_code=404, detail="Vertaling niet gevonden")
-    data = all_versions[version_key]["data"]
+def get_daytext(request: Request, seed: str = None):
+    data = statenvertaling["data"]
     books = list(data.keys())
     base = seed if seed else date.today().isoformat()
     hash_val = int(hashlib.sha256(base.encode()).hexdigest(), 16)
@@ -323,29 +235,14 @@ def get_daytext(request: Request, seed: str = None, version: str = "statenvertal
     chapter = random.choice(list(data[book].keys()))
     verse = random.choice(list(data[book][chapter].keys()))
     return {
-        "version": version_key,
+        "version": "statenvertaling",
         "book": book,
         "chapter": chapter,
         "verse": verse,
         "text": data[book][chapter][verse],
     }
 
-@app.get("/api/versions")
-@limiter.limit("10/minute")
-def get_versions(request: Request):
-    # Return metadata for all versions
-    return [
-        {
-            "key": k,
-            "name": v.get("meta", {}).get("name", k),
-            "shortname": v.get("meta", {}).get("shortname"),
-            "module": v.get("meta", {}).get("module"),
-            "lang": v.get("meta", {}).get("lang"),
-            "year": v.get("meta", {}).get("year"),
-            "description": v.get("meta", {}).get("description"),
-        }
-        for k, v in all_versions.items()
-    ]
+
 
 @app.get("/api/chapter")
 @limiter.limit("20/minute")
@@ -367,35 +264,6 @@ def get_chapter(book: str, chapter: str, request: Request, version: str = "state
     except KeyError:
         raise HTTPException(status_code=404, detail="Hoofdstuk niet gevonden")
 
-# --- COMMENTARY ENDPOINT ---
-@app.get("/api/commentary")
-@limiter.limit("20/minute")
-def get_commentary(request: Request, source: str, book: str, chapter: str, verse: str = None):
-    """
-    Returns commentary for a chapter or specific verse.
-
-    Example:
-    /api/commentary?source=matthew-henry&book=Genesis&chapter=5
-    -> { "1": "...", "2": "...", ... }
-
-    /api/commentary?source=matthew-henry&book=Genesis&chapter=5&verse=3
-    -> { "3": "..." }
-    """
-    src = all_commentaries.get(source)
-    if not src:
-        raise HTTPException(status_code=404, detail="Commentary source not found")
-    book_key = normalize_commentary_book(source, book)
-    if not book_key:
-        raise HTTPException(status_code=404, detail="Book not found in commentary")
-    chapters = src.get("books", {}).get(book_key, {}).get("chapters", {})
-    if chapter not in chapters:
-        raise HTTPException(status_code=404, detail="Chapter not found in commentary")
-    verses = chapters[chapter]  # dict of verse -> text
-    if verse:
-        if verse not in verses:
-            raise HTTPException(status_code=404, detail="Verse not found in commentary")
-        return {verse: verses[verse]}
-    return verses
 
 # --- API-key authenticatie ---
 # Database setup (SQLite)

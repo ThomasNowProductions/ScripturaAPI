@@ -2,11 +2,11 @@
 Book name normalization for Bible references.
 
 Handles mapping between different book name formats and the
-standardized names expected by the Scriptura API.
+standardized names expected by the API.
 """
 
 class BookNormalizer:
-    """Normalizes book names to match Scriptura API expectations."""
+    """Normalizes book names to match API expectations."""
     
     def __init__(self):
         """Initialize the book normalizer with common mappings."""

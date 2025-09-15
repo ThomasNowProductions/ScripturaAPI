@@ -1,13 +1,13 @@
-# 📖 Scriptura API
+# BijbelQuiz Scriptura
 
 <p>
   <img src="https://img.shields.io/badge/Version-v1.0-blue?style=for-the-badge" alt="Version" />
-  <img src="https://img.shields.io/github/license/AlexLamper/bijbel-api?style=for-the-badge" alt="License" />
-  <img src="https://img.shields.io/github/issues/AlexLamper/bijbel-api?style=for-the-badge" alt="Issues" />
+  <img src="https://img.shields.io/badge/Version-v1.0-blue?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" />
 </p>
 
 **A REST API for retrieving Bible texts and commentaries across multiple translations.**  
-Supports various languages including Dutch, English, Afrikaans, and more. Developed for developers, theologians, students, and hobby projects who want to use Biblical texts digitally.
+Supports various languages including Dutch, English, Afrikaans, and more. Developed by BijbelQuiz for developers, theologians, students, and hobby projects who want to use Biblical texts digitally.
 
 ---
 
@@ -118,10 +118,11 @@ This API is licensed under the [MIT License](LICENSE).
 
 ## 📎 Contact
 
-- GitHub: [@AlexLamper](https://github.com/AlexLamper)
-- Mail: `devlamper06@gmail.com`
-- Scriptura API: [https://www.scriptura-api.com](https://www.scriptura-api.com)
-- Scriptura: [https://www.scriptura-edu.com](https://www.scriptura-edu.com)
+
+- Developed by: **BijbelQuiz**
+- GitHub: [BijbelQuiz](https://github.com/BijbelQuiz)
+
+
 
 ---
 

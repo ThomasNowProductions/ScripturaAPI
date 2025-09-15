@@ -1,5 +1,5 @@
 """
-Parsing module for enhanced Scriptura API.
+Parsing module for enhanced Bible API.
 
 This module provides advanced Bible reference parsing capabilities,
 including support for complex references, discontinuous ranges, and
